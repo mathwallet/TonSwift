@@ -238,11 +238,11 @@ public class CellSlice {
 //        return hashMap;
 //    }
 
-//    public func skipDictE() -> CellSlice {
-//        let isEmpty = loadBit()
-//        return isEmpty ? skipRefs(length: 1) : self
-//    }
-//
+    public func skipDictE() throws -> CellSlice {
+        let isEmpty = try loadBit()
+        return isEmpty ? skipRefs(length: 1) : self
+    }
+
 //    /**
 //     * TODO - skip without traversing the actual hashmap
 //     */
