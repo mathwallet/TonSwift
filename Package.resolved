@@ -1,0 +1,88 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Base58Swift",
+        "repositoryURL": "https://github.com/mathwallet/Base58Swift.git",
+        "state": {
+          "branch": null,
+          "revision": "04ccae070ac6f3117db11af864a04229f7c1e025",
+          "version": "0.0.1"
+        }
+      },
+      {
+        "package": "BigInt",
+        "repositoryURL": "https://github.com/attaswift/BigInt.git",
+        "state": {
+          "branch": null,
+          "revision": "0ed110f7555c34ff468e72e1686e59721f2b0da6",
+          "version": "5.3.0"
+        }
+      },
+      {
+        "package": "BIP39swift",
+        "repositoryURL": "https://github.com/mathwallet/BIP39swift",
+        "state": {
+          "branch": null,
+          "revision": "6e654c1fedac7dc3f01443d8bdf108ab6d50245d",
+          "version": "1.0.1"
+        }
+      },
+      {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "19b3c3ceed117c5cc883517c4e658548315ba70b",
+          "version": "1.6.0"
+        }
+      },
+      {
+        "package": "JOSESwift",
+        "repositoryURL": "https://github.com/lukereichold/JOSESwift.git",
+        "state": {
+          "branch": null,
+          "revision": "864d6a014a4aa343dd47f3804f12b8a42a7b21eb",
+          "version": "2.2.4"
+        }
+      },
+      {
+        "package": "RIPEMDSwift",
+        "repositoryURL": "https://github.com/mathwallet/RIPEMDSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "1a9b1487d1880585c8cc46e26b6d9838184f7858",
+          "version": "0.0.1"
+        }
+      },
+      {
+        "package": "Secp256k1Swift",
+        "repositoryURL": "https://github.com/mathwallet/Secp256k1Swift.git",
+        "state": {
+          "branch": null,
+          "revision": "56bc47725ea218127c47b20e0d9bc93f7a01f923",
+          "version": "1.3.1"
+        }
+      },
+      {
+        "package": "swift-atomics",
+        "repositoryURL": "https://github.com/apple/swift-atomics.git",
+        "state": {
+          "branch": null,
+          "revision": "ff3d2212b6b093db7f177d0855adbc4ef9c5f036",
+          "version": "1.0.3"
+        }
+      },
+      {
+        "package": "TweetNacl",
+        "repositoryURL": "https://github.com/lishuailibertine/tweetnacl-swiftwrap",
+        "state": {
+          "branch": null,
+          "revision": "80afe3695c4613517c2b5d04b5d3ae41bda33647",
+          "version": "1.0.5"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
