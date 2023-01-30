@@ -17,6 +17,6 @@ public struct BitStringParser {
     }
     init(key: String) {
         let variables = key.components(separatedBy: ",")
-        bitString = BitString(array: Data(hex: variables[0] ?? "0x"), writeCursor: Int(variables[1] ?? "0")!, readCursor: Int(variables[2] ?? "0")!, length: Int(variables[3] ?? "0")!)
+        bitString = BitString(array: Data(hex: variables[0]), writeCursor: Int(variables[1])!, readCursor: Int(variables[2])!, length: Int(variables[3])!)
     }
 }
