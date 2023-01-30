@@ -73,7 +73,7 @@ public class BitString {
      * Return bit's value at position n
      *
      * @param n Int
-     * @return boolean    bit value at position `n`
+     * @return Bool    bit value at position `n`
      */
     public func getNValue(n: Int) -> Bool {
         return (array[(n / 8)] & (1 << (7 - (n % 8)))) > 0
@@ -130,7 +130,7 @@ public class BitString {
     /**
      * Write bit and increase cursor
      *
-     * @param b boolean
+     * @param b Bool
      */
     public func writeBit(b: Bool) throws {
         if (b) {
@@ -156,7 +156,7 @@ public class BitString {
     }
 
     /**
-     * @param ba boolean[]
+     * @param ba Bool[]
      */
     public func writeBitArray(ba: [Bool]) throws {
         for b in ba {
@@ -176,7 +176,7 @@ public class BitString {
     /**
      * Write unsigned Int
      *
-     * @param number    BigInteger
+     * @param number    BigInt
      * @param bitLength Int size of uInt in bits
      */
     public func writeUInt(number: BigInt, bitLength: Int) throws {
@@ -217,7 +217,7 @@ public class BitString {
     /**
      * Write signed Int
      *
-     * @param number    BigInteger
+     * @param number    BigInt
      * @param bitLength Int size of Int in bits
      */
     public func writeInt(number: BigInt, bitLength: Int) throws {
@@ -256,7 +256,7 @@ public class BitString {
     /**
      * Write array of unsigned 8-bit Ints
      *
-     * @param ui8 byte[]
+     * @param ui8 Data
      */
     public func writeBytes(ui8s: [UInt8]) throws {
         for ui8 in ui8s {
@@ -274,7 +274,7 @@ public class BitString {
     }
 
     /**
-     * @param amount positive BigInteger in nano-coins
+     * @param amount positive BigInt in nano-coins
      */
     public func writeCoins(amount: BigInt) throws {
         if (amount.signum() == -1) {
@@ -379,7 +379,7 @@ public class BitString {
      * Read bits of bitLength without moving readCursor, i.e. modifying BitString
      *
      * @param bitLength length in bits
-     * @return BigInteger
+     * @return BigInt
      */
     public func preReadUInt(bitLength: Int) throws -> BigInt {
         let oldReadCursor = readCursor
@@ -403,7 +403,7 @@ public class BitString {
      * Read unsigned Int of bitLength
      *
      * @param bitLength Int bitLength Size of uInt in bits
-     * @return BigInteger
+     * @return BigInt
      */
     public func readUInt(bitLength: Int) throws -> BigInt {
         if (bitLength < 1) {
@@ -424,7 +424,7 @@ public class BitString {
      * Read signed Int of bitLength
      *
      * @param bitLength Int bitLength Size of signed Int in bits
-     * @return BigInteger
+     * @return BigInt
      */
     public func readInt(bitLength: Int) throws -> BigInt {
         if (bitLength < 1) {

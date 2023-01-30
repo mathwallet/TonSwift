@@ -108,7 +108,7 @@ public class Cell {
     }
 
     /**
-     * @param serializedBoc byte[]
+     * @param serializedBoc Data
      * @return List<Cell> root cells
      */
     public static func fromBoc(serializedBoc: Data) throws -> Cell {
@@ -263,11 +263,11 @@ public class Cell {
     /**
      * Convert Cell to BoC
      *
-     * @param hasIdx       boolean, default true
-     * @param hashCrc32    boolean, default true
-     * @param hasCacheBits boolean, default false
+     * @param hasIdx       Bool, default true
+     * @param hashCrc32    Bool, default true
+     * @param hasCacheBits Bool, default false
      * @param flags        int, default 0
-     * @return byte[]
+     * @return Data
      */
     public func toBoc(hasIdx: Bool, hashCrc32: Bool, hasCacheBits: Bool, flags: Int) throws -> Data {
 
@@ -364,9 +364,9 @@ public class Cell {
     /**
      * Convert Cell to BoC
      *
-     * @param hasIdx       boolean, default true
-     * @param hashCrc32    boolean, default true
-     * @param hasCacheBits boolean, default false
+     * @param hasIdx       Bool, default true
+     * @param hashCrc32    Bool, default true
+     * @param hasCacheBits Bool, default false
      * @param flags        int, default 0
      * @return String in base64
      */
@@ -454,7 +454,7 @@ public class Cell {
 
     /**
      * @param cell                  Cell
-     * @param topologicalOrderArray array of pairs: <byte[] cellHash, Cell Cell>
+     * @param topologicalOrderArray array of pairs: <Data cellHash, Cell Cell>
      * @param indexHashmap          cellHash: <String cellHash, Integer cellIndex>
      * @param parentHash            Uint8Array, default null, added neodiX
      * @return TreeWalkResult, topologicalOrderArray and indexHashmap
@@ -638,7 +638,7 @@ public class Cell {
     }
 
     /**
-     * @param serializedBoc byte[] bytearray
+     * @param serializedBoc Data bytearray
      * @return List<Cell> root cells
      */
     

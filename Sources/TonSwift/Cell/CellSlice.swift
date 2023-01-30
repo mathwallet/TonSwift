@@ -163,7 +163,7 @@ public class CellSlice {
 //    }
 
 //    public TonHashMapE loadDictE(int n, Function<BitString, Object> keyParser, Function<Cell, Object> valueParser) {
-//        boolean isEmpty = !this.loadBit();
+//        Bool isEmpty = !this.loadBit();
 //        if (isEmpty) {
 //            return new TonHashMapE(n);
 //        } else {
@@ -181,7 +181,7 @@ public class CellSlice {
 //
 //
 //    public TonPfxHashMapE loadDictPfxE(int n, Function<BitString, Object> keyParser, Function<Cell, Object> valueParser) {
-//        boolean isEmpty = !this.loadBit();
+//        Bool isEmpty = !this.loadBit();
 //        if (isEmpty) {
 //            return new TonPfxHashMapE(n);
 //        } else {
@@ -214,7 +214,7 @@ public class CellSlice {
      * @return TonHashMap - dict
      */
 //    public TonHashMap preloadDictE(int n, Function<BitString, Object> keyParser, Function<Cell, Object> valueParser) {
-//        boolean isEmpty = !this.preloadBit();
+//        Bool isEmpty = !this.preloadBit();
 //        if (isEmpty) {
 //            return new TonHashMap(n);
 //        } else {

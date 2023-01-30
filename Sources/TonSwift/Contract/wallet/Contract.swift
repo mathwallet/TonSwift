@@ -126,9 +126,9 @@ public class Contract {
     /**
      * @param dest               Address
      * @param gramValue          BigInt, 0
-     * @param ihrDisabled        boolean, true
-     * @param bounce             boolean, nil
-     * @param bounced            boolean, false
+     * @param ihrDisabled        Bool, true
+     * @param bounce             Bool, nil
+     * @param bounced            Bool, false
      * @param src                Address, nil
      * @param currencyCollection nil,
      * @param ihrFees            number, 0

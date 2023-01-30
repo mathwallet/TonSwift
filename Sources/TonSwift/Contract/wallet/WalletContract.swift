@@ -28,7 +28,7 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param seqno long
+     * @param seqno Int64
      * @return Cell
      */
     func createSigningMessage(seqno: Int64) throws -> Cell {
@@ -38,7 +38,7 @@ public class WalletContract : Contract {
     /**
      * External message for initialization
      *
-     * @param secretKey byte[] nacl.KeyPair.secretKey
+     * @param secretKey Data nacl.KeyPair.secretKey
      * @return InitExternalMessage
      */
     func  createInitExternalMessage(secretKey: Data) throws -> InitExternalMessage {
@@ -72,9 +72,9 @@ public class WalletContract : Contract {
     
     /**
      * @param signingMessage Cell
-     * @param secretKey      byte[]  nacl.KeyPair.secretKey
-     * @param seqno          long
-     * @param dummySignature boolean, flag to specify whether to use signature based on private key or fill the space with zeros.
+     * @param secretKey      Data  nacl.KeyPair.secretKey
+     * @param seqno          Int64
+     * @param dummySignature Bool, flag to specify whether to use signature based on private key or fill the space with zeros.
      * @return ExternalMessage
      */
     func createExternalMessage(signingMessage: Cell,
@@ -123,13 +123,13 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey      byte[]  nacl.KeyPair.secretKey
+     * @param secretKey      Data  nacl.KeyPair.secretKey
      * @param address        Address destination
-     * @param amount         BigInteger in nano-coins
-     * @param seqno          long
+     * @param amount         BigInt in nano-coins
+     * @param seqno          Int64
      * @param payload        Cell, null
      * @param sendMode       byte, 3
-     * @param dummySignature boolean, false
+     * @param dummySignature Bool, false
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
@@ -152,10 +152,10 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey byte[]  nacl.KeyPair.secretKey
+     * @param secretKey Data  nacl.KeyPair.secretKey
      * @param address   Address
-     * @param amount    BigInteger in nano-coins
-     * @param seqno     long
+     * @param amount    BigInt in nano-coins
+     * @param seqno     Int64
      * @return ExternalMessage
      */
     func createTransferMessage(secretKey: Data,
@@ -167,10 +167,10 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey byte[]  nacl.KeyPair.secretKey
+     * @param secretKey Data  nacl.KeyPair.secretKey
      * @param address   Address
-     * @param amount    BigInteger in nano-coins
-     * @param seqno     long
+     * @param amount    BigInt in nano-coins
+     * @param seqno     Int64
      * @return ExternalMessage
      */
     func createTransferMessage(secretKey: Data,
@@ -181,10 +181,10 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey byte[]  nacl.KeyPair.secretKey
+     * @param secretKey Data  nacl.KeyPair.secretKey
      * @param address   String
-     * @param amount    BigInteger in nano-coins
-     * @param seqno     long
+     * @param amount    BigInt in nano-coins
+     * @param seqno     Int64
      * @return ExternalMessage
      */
     func createTransferMessage(secretKey: Data,
@@ -198,13 +198,13 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey      byte[] nacl.KeyPair.secretKey
+     * @param secretKey      Data nacl.KeyPair.secretKey
      * @param address        String
-     * @param amount         BigInteger in nano-coins
-     * @param seqno          long
+     * @param amount         BigInt in nano-coins
+     * @param seqno          Int64
      * @param payload        Cell
      * @param sendMode       byte, 3
-     * @param dummySignature boolean, false
+     * @param dummySignature Bool, false
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
@@ -223,13 +223,13 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey      byte[]  nacl.KeyPair.secretKey
+     * @param secretKey      Data  nacl.KeyPair.secretKey
      * @param address        Address
-     * @param amount         BigInteger in nano-coins
-     * @param seqno          long
-     * @param payload        byte[]
+     * @param amount         BigInt in nano-coins
+     * @param seqno          Int64
+     * @param payload        Data
      * @param sendMode       byte, 3
-     * @param dummySignature boolean, false
+     * @param dummySignature Bool, false
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
@@ -248,13 +248,13 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey      byte[]  nacl.KeyPair.secretKey
+     * @param secretKey      Data  nacl.KeyPair.secretKey
      * @param address        String
-     * @param amount         BigInteger in nano-coins
-     * @param seqno          long
-     * @param payload        byte[]
+     * @param amount         BigInt in nano-coins
+     * @param seqno          Int64
+     * @param payload        Data
      * @param sendMode       byte, 3
-     * @param dummySignature boolean, false
+     * @param dummySignature Bool, false
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
@@ -273,13 +273,13 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey      byte[]  nacl.KeyPair.secretKey
+     * @param secretKey      Data  nacl.KeyPair.secretKey
      * @param address        Address
-     * @param amount         BigInteger in nano-coins
-     * @param seqno          long
+     * @param amount         BigInt in nano-coins
+     * @param seqno          Int64
      * @param payload        String
      * @param sendMode       byte, func 3
-     * @param dummySignature boolean, false
+     * @param dummySignature Bool, false
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
@@ -304,13 +304,13 @@ public class WalletContract : Contract {
     }
     
     /**
-     * @param secretKey      byte[]  nacl.KeyPair.secretKey
+     * @param secretKey      Data  nacl.KeyPair.secretKey
      * @param address        String
-     * @param amount         BigInteger in nano-coins
-     * @param seqno          long
+     * @param amount         BigInt in nano-coins
+     * @param seqno          Int64
      * @param payload        String
      * @param sendMode       byte
-     * @param dummySignature boolean
+     * @param dummySignature Bool
      * @param stateInit      Cell
      * @return ExternalMessage
      */
@@ -331,7 +331,7 @@ public class WalletContract : Contract {
     /**
      * Get current seqno
      *
-     * @return long
+     * @return Int64
      */
 //    func getSeqno(tonlib: Tonlib) -> Int64 {
 //
@@ -347,6 +347,6 @@ public class WalletContract : Contract {
 //
 //        let seqno = (TvmStackEntryNumber) result.getStack().get(0)
 //
-//        return seqno.getNumber().longValue()
+//        return seqno.getNumber().Int64Value()
 //    }
 }

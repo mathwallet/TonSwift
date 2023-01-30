@@ -57,7 +57,7 @@ public class WalletV4ContractR2: WalletContract {
     
     /**
      * @param seqno     Int64
-     * @param withoutOp boolean
+     * @param withoutOp Bool
      * @return Cell
      */
     
@@ -95,7 +95,7 @@ public class WalletV4ContractR2: WalletContract {
     //    public func deployAndInstallPlugin(tonlib:Tonlib, NewPlugin params) {
     //
     //        Cell signingMessage = createSigningMessage(params.seqno, true)
-    //        signingMessage.bits.writeUint(BigInteger.ONE, 8) // op
+    //        signingMessage.bits.writeUint(BigInt.ONE, 8) // op
     //        signingMessage.bits.writeInt(BigInt(params.pluginWc), 8)
     //        signingMessage.bits.writeCoins(params.amount) // plugin balance
     //        signingMessage.refs.add(params.stateInit)
@@ -142,7 +142,7 @@ public class WalletV4ContractR2: WalletContract {
     
     /**
      * @param params    DeployedPlugin,
-     * @param isInstall boolean install or uninstall
+     * @param isInstall Bool install or uninstall
      */
     func setPlugin(params: DeployedPlugin, isInstall: Bool) throws -> ExternalMessage {
         
@@ -190,7 +190,7 @@ public class WalletV4ContractR2: WalletContract {
     //        return subWalletId.getNumber().Int64Value()
     //    }
     //
-    //        public byte[] getPublicKey(Tonlib tonlib) {
+    //        public Data getPublicKey(Tonlib tonlib) {
     //            Address myAddress = getAddress()
     //            RunResult result = tonlib.runMethod(myAddress, "get_public_key")
     //            TvmStackEntryNumber pubKey = (TvmStackEntryNumber) result.getStack().get(0)
@@ -200,10 +200,10 @@ public class WalletV4ContractR2: WalletContract {
     
     /**
      * @param pluginAddress Address
-     * @return boolean
+     * @return Bool
      */
-    //        public boolean isPluginInstalled(Tonlib tonlib, Address pluginAddress) {
-    //            String hashPart = new BigInteger(pluginAddress.hashPart).toString()
+    //        public Bool isPluginInstalled(Tonlib tonlib, Address pluginAddress) {
+    //            String hashPart = new BigInt(pluginAddress.hashPart).toString()
     //
     //            Address myAddress = getAddress()
     //
@@ -291,8 +291,8 @@ public class WalletV4ContractR2: WalletContract {
     //            TvmStackEntryNumber lastRequestTime = (TvmStackEntryNumber) subscriptionData.get(7)
     //
     //            Int64 now = System.currentTimeMillis() / 1000
-    //            boolean isPaid = ((now - lastPaymentTime.getNumber().Int64Value()) < period.getNumber().Int64Value())
-    //            boolean paymentReady = !isPaid & ((now - lastRequestTime.getNumber().Int64Value()) > timeOut.getNumber().Int64Value())
+    //            Bool isPaid = ((now - lastPaymentTime.getNumber().Int64Value()) < period.getNumber().Int64Value())
+    //            Bool paymentReady = !isPaid & ((now - lastRequestTime.getNumber().Int64Value()) > timeOut.getNumber().Int64Value())
     //
     //            TvmStackEntryNumber failedAttempts = (TvmStackEntryNumber) subscriptionData.get(8)
     //            TvmStackEntryNumber subscriptionId = (TvmStackEntryNumber) subscriptionData.get(9)
