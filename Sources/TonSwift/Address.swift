@@ -148,11 +148,12 @@ public class Address {
             addr[0] = UInt8(tag)
             addr[1] = UInt8(wc)
 
-            addr.append(contentsOf: hashPart[0..<32])
+            addr.replaceSubrange(2...33, with: hashPart[0..<32])
 
             let crc16 = Utils.getCRC16ChecksumAsBytes(data: Data(addr))
-            addressWithChecksum.append(contentsOf: addr[0..<34])
-            addressWithChecksum.append(contentsOf: crc16[0..<2])
+            
+            addressWithChecksum.replaceSubrange(0..<34, with: addr[0..<34])
+            addressWithChecksum.replaceSubrange(34..<36, with: crc16[0..<2])
 
             var addressBase64 = addressWithChecksum.toBase64()
 

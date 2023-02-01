@@ -26,15 +26,35 @@ public struct Utils {
         let intCrcBytes = withUnsafeBytes(of: crc32c.bigEndian, Array.init)
         return Data(intCrcBytes.reversed())
     }
+    
+    public static func getCRC16ChecksumAsInt(data: Data) -> Int {
+        var crc: Int = 0x0000;
+        let polynomial: Int = 0x1021;
+        for b in data.bytes {
+            for i in 0..<8 {
+                let bit = ((b >> (7 - i) & 1) == 1)
+                let c15 = ((crc >> 15 & 1) == 1)
+                crc = crc << 1
+                if (UInt8(c15 ? 1 : 0) ^ UInt8(bit ? 1 : 0)) == UInt8(1) {
+                    crc = crc ^ polynomial
+                }
+            }
+        }
+
+        crc = crc & 0xffff
+        return crc;
+    }
 
     public static func getCRC16ChecksumAsBytes(data: Data) -> Data {
-        let crc16c = Checksum.crc16(data.bytes)
-        return Data(intToByteArray(value: Int(crc16c)))
+        let crc16c = getCRC16ChecksumAsInt(data: data)
+        return Data(intToByteArray(value: crc16c))
     }
     
     public static func intToByteArray(value: Int) -> [UInt8] {
-         return [UInt8(value >> 8), UInt8(value)]
-     }
+        var intV = value
+        let valueBytes: Data = Data(bytes: &intV, count: 8)
+        return [valueBytes[1],valueBytes[0]]
+    }
     
     public static func compareBytes(a: [UInt8], b: [UInt8]) -> Bool {
         return a.elementsEqual(b)
