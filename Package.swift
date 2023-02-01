@@ -18,7 +18,6 @@ let package = Package(
         .package(name:"BIP39swift", url: "https://github.com/mathwallet/BIP39swift", from: "1.0.1"),
         .package(name: "Secp256k1Swift", url: "https://github.com/mathwallet/Secp256k1Swift.git", from: "1.2.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.4.1"),
-        .package(url: "https://github.com/lukereichold/JOSESwift.git", .upToNextMajor(from: "2.2.4")),
         .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.0.0"))
     ],
     targets: [
@@ -30,7 +29,6 @@ let package = Package(
                            "BIP39swift",
                            .product(name: "BIP32Swift", package: "Secp256k1Swift"),
                            "CryptoSwift",
-                           "JOSESwift",
                            .product(name: "Atomics", package: "swift-atomics")
                           ]),
         .testTarget(

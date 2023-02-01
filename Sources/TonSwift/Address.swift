@@ -7,7 +7,6 @@
 
 import Foundation
 import BigInt
-import JOSESwift
 import CryptoSwift
 
 public class Address {
@@ -158,7 +157,8 @@ public class Address {
             var addressBase64 = addressWithChecksum.toBase64()
 
             if (isUrlSafe) {
-                addressBase64 = Data(addressWithChecksum).base64URLEncodedString()
+                let s = Data(addressWithChecksum).base64EncodedString()
+                addressBase64 = s.replacingOccurrences(of: "=", with: "").replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_")
             }
             return addressBase64
         }

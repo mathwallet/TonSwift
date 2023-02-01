@@ -22,7 +22,7 @@ public struct Utils {
     }
     
     public static func getCRC32ChecksumAsBytesReversed(data: Data) -> Data {
-        let crc32c = Checksum.crc32(data.bytes)
+        let crc32c = Checksum.crc32c(data.bytes)
         let intCrcBytes = withUnsafeBytes(of: crc32c.bigEndian, Array.init)
         return Data(intCrcBytes.reversed())
     }
@@ -37,7 +37,7 @@ public struct Utils {
      }
     
     public static func compareBytes(a: [UInt8], b: [UInt8]) -> Bool {
-        return a == b
+        return a.elementsEqual(b)
     }
     
     public static func signData(prvKey: Data, data: Data) throws -> Data {

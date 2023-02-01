@@ -50,8 +50,10 @@ public class Contract {
         let stateInit = try createStateInit(code: codeCell, data: dataCell)
         
         let stateInitHash = try stateInit.hash()
-        
-        let address = try Address.of(addressStr:"\(getOptions()?.wc ?? 0):\(stateInitHash.toHexString())" )
+        guard let _options = options, let wc = _options.wc else {
+            throw TonError.message("contract options nil")
+        }
+        let address = try Address.of(addressStr:"\(wc):\(stateInitHash.toHexString())" )
         return StateInit(stateInit: stateInit, address: address!, code: codeCell, data: dataCell)
     }
 
@@ -74,15 +76,16 @@ public class Contract {
      */
     public func createStateInit(code: Cell?, data: Cell?, library: Cell?, splitDepth: Cell?, ticktock: Cell?) throws -> Cell {
         
-        guard let _library = library else {
+        if library != nil {
             throw TonError.message("Library in state init is not implemented")
+            
         }
         
-        guard let _ = splitDepth else {
+        if splitDepth != nil {
             throw TonError.message("Split depth in state init is not implemented")
         }
         
-        guard let _ = ticktock else {
+        if ticktock != nil  {
             throw TonError.message("Ticktock in state init is not implemented")
         }
 
@@ -96,7 +99,7 @@ public class Contract {
         if data != nil {
             dataUnnil = true
         }
-        let _ = try stateInit.storeBits(arrayBits: [true, true, codeUnnil, dataUnnil, true])
+        let _ = try stateInit.storeBits(arrayBits: [splitDepth != nil, ticktock != nil, codeUnnil, dataUnnil, library != nil])
 
         if codeUnnil {
             let _ = try stateInit.storeRef(c: code!)
@@ -104,7 +107,9 @@ public class Contract {
         if dataUnnil {
             let _ = try stateInit.storeRef(c: data!)
         }
-        let _ = try stateInit.storeRef(c: _library)
+        if let _library = library {
+            let _ = try stateInit.storeRef(c: _library)
+        }
 
         return stateInit.endCell
     }

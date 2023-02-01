@@ -38,7 +38,7 @@ public class BitString {
      * @param length Int    length of BitString in bits
      */
     public init(length: Int) {
-        self.array = Data(count: Int(ceil(Double(length) / Double(8))))
+        self.array = Data(repeating:0, count: Int(ceil(Double(length) / Double(8))))
         self.writeCursor = 0
         self.readCursor = 0
         self.length = length
@@ -100,7 +100,7 @@ public class BitString {
         guard checkRange(n: n) else {
             throw TonError.message("BitString overflow")
         }
-        array[(n / 8)] |= 1 << (7 - (n % 8))
+        array[(n / 8)] = array[(n / 8)] | (1 << (7 - (n % 8)))
     }
 
     /**
@@ -112,7 +112,7 @@ public class BitString {
         guard checkRange(n: n) else {
             throw TonError.message("BitString overflow")
         }
-        array[(n / 8)] &= ~(1 << (7 - (n % 8)));
+        array[(n / 8)] = array[(n / 8)] & (~(1 << (7 - (n % 8))))
     }
 
     /**
@@ -124,7 +124,7 @@ public class BitString {
         guard checkRange(n: n) else {
             throw TonError.message("BitString overflow")
         }
-        array[(n / 8)] ^= 1 << (7 - (n % 8));
+        array[(n / 8)] = array[(n / 8)] ^ (1 << (7 - (n % 8)))
     }
 
     /**
@@ -183,14 +183,14 @@ public class BitString {
         if number < 0 {
             throw TonError.message("Unsigned number cannot be less than 0")
         }
-        if (bitLength == 0 || (number.bitWidth > bitLength)) {
+        if (bitLength == 0 || (number.magnitude.bitWidth > bitLength)) {
             if (number == 0) {
                 return
             }
             throw TonError.message("bitLength is too small for number, got number= \(number), bitLength= \(bitLength)")
         }
 
-        var s = number.description
+        var s = String(number, radix: 2)
 
         if (s.count != bitLength) {
             for _ in 0..<bitLength - s.count {

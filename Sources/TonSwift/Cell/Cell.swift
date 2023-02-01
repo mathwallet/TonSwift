@@ -495,7 +495,7 @@ public class Cell {
         let inputData = serializedBoc
         let prefix = serializedBoc[0..<4]
         let serializedBocs = serializedBoc
-        var newSerializedBoc = serializedBocs[4..<serializedBoc.count]
+        var newSerializedBoc = serializedBocs[4..<serializedBoc.count].bytes
         var has_idx: Int = 0
         var hash_crc32: Int = 0
         var has_cache_bits: Int = 0
@@ -518,25 +518,27 @@ public class Cell {
             size_bytes = Int(newSerializedBoc[0])
         }
         
-        newSerializedBoc = newSerializedBoc[1..<newSerializedBoc.count]
+        newSerializedBoc = Array<UInt8>(newSerializedBoc[1..<newSerializedBoc.count])
+//        newSerializedBoc[1..<newSerializedBoc.count]
         if newSerializedBoc.count < 1 + 5 * size_bytes {
             throw TonError.message("Not enough bytes for encoding cells counters")
         }
         let offset_bytes = Int(newSerializedBoc[0] & 0xff)
         
-        newSerializedBoc = newSerializedBoc[1..<newSerializedBoc.count]
-        let cells_num = Utils.readNBytesFromArray(count: size_bytes, ui8array: newSerializedBoc.bytes)
-        newSerializedBoc = newSerializedBoc[size_bytes..<newSerializedBoc.count]
-        let roots_num = Utils.readNBytesFromArray(count: size_bytes, ui8array: newSerializedBoc.bytes)
-        newSerializedBoc = newSerializedBoc[size_bytes..<newSerializedBoc.count]
-        let absent_num = Utils.readNBytesFromArray(count: size_bytes, ui8array: newSerializedBoc.bytes)
-        newSerializedBoc = newSerializedBoc[size_bytes..<newSerializedBoc.count]
-        let tot_cells_size = Utils.readNBytesFromArray(count: offset_bytes, ui8array: newSerializedBoc.bytes)
+        newSerializedBoc = Array<UInt8>(newSerializedBoc[1..<newSerializedBoc.count])
+//        newSerializedBoc = newSerializedBoc[1..<newSerializedBoc.count]
+        let cells_num = Utils.readNBytesFromArray(count: size_bytes, ui8array: newSerializedBoc)
+        newSerializedBoc =  Array<UInt8>(newSerializedBoc[size_bytes..<newSerializedBoc.count])
+        let roots_num = Utils.readNBytesFromArray(count: size_bytes, ui8array: newSerializedBoc)
+        newSerializedBoc =  Array<UInt8>(newSerializedBoc[size_bytes..<newSerializedBoc.count])
+        let absent_num = Utils.readNBytesFromArray(count: size_bytes, ui8array: newSerializedBoc)
+        newSerializedBoc =  Array<UInt8>(newSerializedBoc[size_bytes..<newSerializedBoc.count])
+        let tot_cells_size = Utils.readNBytesFromArray(count: offset_bytes, ui8array: newSerializedBoc)
         
         if tot_cells_size < 0 {
             throw TonError.message("Cannot calculate total cell size")
         }
-        newSerializedBoc = newSerializedBoc[size_bytes..<newSerializedBoc.count]
+        newSerializedBoc =  Array<UInt8>(newSerializedBoc[offset_bytes..<newSerializedBoc.count])
         
         
         
@@ -546,40 +548,40 @@ public class Cell {
         var root_list = [Int]()
         
         for _ in 0 ..< Int(roots_num) {
-            root_list.append(Utils.readNBytesFromArray(count: Int(size_bytes), ui8array: newSerializedBoc.bytes))
-            newSerializedBoc = newSerializedBoc[size_bytes..<newSerializedBoc.count]
+            root_list.append(Utils.readNBytesFromArray(count: Int(size_bytes), ui8array: newSerializedBoc))
+            newSerializedBoc = Array<UInt8>( newSerializedBoc[size_bytes..<newSerializedBoc.count])
         }
         
-        var index = [Int]()
+        var index = [Int](repeating: 0, count: cells_num)
         if has_idx != 0 {
             if newSerializedBoc.count < Int(offset_bytes) * cells_num {
                 throw TonError.message("Not enough bytes for index encoding")
             }
             for _ in 0 ..< cells_num {
-                index.append(Utils.readNBytesFromArray(count: Int(offset_bytes), ui8array: newSerializedBoc.bytes))
-                newSerializedBoc = newSerializedBoc[Data.Index(offset_bytes)..<newSerializedBoc.count]
+                index.append(Utils.readNBytesFromArray(count: Int(offset_bytes), ui8array: newSerializedBoc))
+                newSerializedBoc =  Array<UInt8>(newSerializedBoc[Data.Index(offset_bytes)..<newSerializedBoc.count])
             }
         }
         
         if newSerializedBoc.count < tot_cells_size {
             throw TonError.message("Not enough bytes for cells data")
         }
-        let cell_data = newSerializedBoc[0..<tot_cells_size]
-        newSerializedBoc = newSerializedBoc[tot_cells_size..<newSerializedBoc.count]
+        let cell_data =  Array<UInt8>(newSerializedBoc[0..<tot_cells_size])
+        newSerializedBoc =  Array<UInt8>(newSerializedBoc[tot_cells_size..<newSerializedBoc.count])
         if hash_crc32 != 0 {
             if newSerializedBoc.count < 4 {
                 throw TonError.message("Not enough bytes for crc32c hashsum")
             }
             let bocWithoutCrc = inputData[0..<inputData.count-4]
-            let crcInBoc = newSerializedBoc[0..<4]
+            let crcInBoc =  Array<UInt8>(newSerializedBoc[0..<4])
             let crc32 = Utils.getCRC32ChecksumAsBytesReversed(data: bocWithoutCrc)
-            if !Utils.compareBytes(a: crc32.bytes, b: crcInBoc.bytes) {
+            if !Utils.compareBytes(a: crc32.bytes, b: crcInBoc) {
                 throw TonError.message("Crc32c hashsum mismatch")
             }
-            newSerializedBoc = newSerializedBoc[4..<newSerializedBoc.count]
+            newSerializedBoc =  Array<UInt8>(newSerializedBoc[4..<newSerializedBoc.count])
         }
         
-        if serializedBoc.count != 0  {
+        if newSerializedBoc.count != 0  {
             throw TonError.message("Too much bytes in BoC serialization")
         }
         let bocHeader = BocHeader(has_idx: has_idx,
@@ -594,7 +596,7 @@ public class Cell {
                                   tot_cells_size: tot_cells_size,
                                   root_list: root_list,
                                   index: index,
-                                  cells_data: cell_data)
+                                  cells_data: Data(cell_data))
         
         return bocHeader
     }
@@ -606,7 +608,7 @@ public class Cell {
         }
         let d1 = Int(cellData.bytes[0] & 0xff)
         let d2 = Int(cellData.bytes[1] & 0xff)
-        var newCellData = cellData[2..<cellData.count]
+        var newCellData = cellData[2..<cellData.count].bytes
         let isExotic = (d1 & 8) != 0
         let refNum = d1 % 8;
         let dataBytesize = Int(ceil(Double(d2) / Double(2)))
@@ -617,16 +619,16 @@ public class Cell {
         if (newCellData.count < dataBytesize + referenceIndexSize * refNum) {
             throw TonError.message("Not enough bytes to encode cell data")
         }
-        try cell.bits.setTopUppedArray(arr: newCellData[0..<dataBytesize], fulfilledBytes: fullfilledBytes)
+        try cell.bits.setTopUppedArray(arr: Data(newCellData[0..<dataBytesize]), fulfilledBytes: fullfilledBytes)
         
-        newCellData = newCellData[dataBytesize..<newCellData.count]
+        newCellData = Array<UInt8>(newCellData[dataBytesize..<newCellData.count])
         
         for _ in 0..<refNum {
-            cell.refsInt.append(Int64(Utils.readNBytesFromArray(count: referenceIndexSize, ui8array: newCellData.bytes)))
+            cell.refsInt.append(Int64(Utils.readNBytesFromArray(count: referenceIndexSize, ui8array: newCellData)))
             cell.refs.append(nil)
-            newCellData = newCellData[referenceIndexSize..<newCellData.count]
+            newCellData = Array<UInt8>(newCellData[referenceIndexSize..<newCellData.count])
         }
-        return DeserializeCellDataResult(cell: cell, cellsData: newCellData)
+        return DeserializeCellDataResult(cell: cell, cellsData: Data(newCellData))
     }
 
     /**

@@ -260,7 +260,7 @@ public class CellSlice {
 
     public func preloadBit() throws -> Bool {
         try checkBitsOverflow(length: 1)
-        return bits.prereadBit();
+        return bits.prereadBit()
     }
 
     public func skipBits(length: Int) throws -> CellSlice {

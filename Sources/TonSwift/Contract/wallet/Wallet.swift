@@ -20,8 +20,8 @@ public struct Wallet {
 //        self.options = Options.builder().build()
 //    }
     
-    public func create() -> Contract {
-        return WalletV4ContractR2(options: options)!
+    public func create() throws -> Contract {
+        return try WalletV4ContractR2(options: options)!
 //        switch walletVersion {
 //        case .simpleR1:
 //            <#code#>

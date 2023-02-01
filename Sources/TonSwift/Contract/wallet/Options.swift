@@ -13,7 +13,7 @@ public struct Options {
     public let secretKey: Data? = nil
     public var publicKey: Data? = nil
     public let Key: Data? = nil
-    public let wc: Int64? = nil
+    public var wc: Int64? = nil
     public let address: Address? = nil
     public let amount: BigInt? = nil
     public var code: Cell? = nil
@@ -27,14 +27,14 @@ public struct Options {
     public let lockupConfig: LockupConfig? = nil
     public let highloadConfig: HighloadConfig? = nil
     public let subscriptionConfig: SubscriptionInfo? = nil
-    public let index: String //dns item index, sha256? = nil
-    public let collectionAddress: Address // todo dns config? = nil
+    public let index: String? = nil //dns item index, sha256? = nil
+    public let collectionAddress: Address? = nil // todo dns config? = nil
     public let collectionContent: Cell? = nil
     public let collectionContentUri: String? = nil
     public let collectionContentBaseUri: String? = nil
     public let dnsItemCodeHex: String? = nil
     public let adminAddress: Address? = nil
-    public let jettonContentUri: String // todo jetton config? = nil
+    public let jettonContentUri: String? = nil// todo jetton config? = nil
     public let jettonWalletCodeHex: String? = nil
     public let marketplaceAddress: Address? = nil
     public let nftItemAddress: Address? = nil
