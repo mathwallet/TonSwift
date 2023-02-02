@@ -7,7 +7,7 @@
 
 import Foundation
  
-public enum WalletVersion{
+public enum WalletVersion: String {
     case simpleR1
     case simpleR2
     case simpleR3
