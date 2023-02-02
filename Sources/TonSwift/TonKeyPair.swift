@@ -11,7 +11,6 @@ import BIP32Swift
 import TweetNacl
 
 public struct TonKeypair {
-    public var mnemonics: String?
     public var derivePath: String?
     public var secretKey: Data
     public var publicKey: Data
@@ -33,7 +32,6 @@ public struct TonKeypair {
         }
         let (seed, _) = TonKeypair.ed25519DeriveKey(path: path, seed: mnemonicSeed)
         try self.init(seed: seed)
-        self.mnemonics = mnemonics
         self.derivePath = path
     }
     

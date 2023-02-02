@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Wallet {
+public struct TonWallet {
     let options: Options
     let walletVersion: WalletVersion
     
