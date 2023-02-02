@@ -51,6 +51,20 @@ public struct TonKeypair {
     }
 }
 
+// MARK: - Sign&Verify
+extension TonKeypair {
+    public func signDigest(cellDigest: Cell) throws -> Data {
+        return try NaclSign.signDetached(message: cellDigest.hash(), secretKey: secretKey)
+    }
+    
+    public func signVerify(message: Data, signature: Data) -> Bool {
+        guard let ret = try? NaclSign.signDetachedVerify(message: message, sig: signature, publicKey: publicKey) else {
+            return false
+        }
+        return ret
+    }
+}
+
 // MARK: Error
 
 extension TonKeypair {
