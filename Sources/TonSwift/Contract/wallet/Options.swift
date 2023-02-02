@@ -57,4 +57,9 @@ public struct Options {
     public let hisPublicKey: Data? = nil
     public let excessFee: BigInt? = nil
     public let closingConfig: ClosingConfig? = nil
+    
+    public init(publicKey: Data? = nil, wc: Int64? = nil) {
+        self.publicKey = publicKey
+        self.wc = wc
+    }
 }
