@@ -27,7 +27,7 @@ public struct TonKeypair {
     }
     
     public init(mnemonics: String, path: String) throws {
-        guard let mnemonicSeed = BIP39.seedFromMmemonics(mnemonics, saltString: "TON default seed") else {
+        guard let mnemonicSeed = Mnemonics.seedFromMmemonics(mnemonics, saltString: "TON default seed") else {
             throw Error.invalidMnemonic
         }
         let (seed, _) = TonKeypair.ed25519DeriveKey(path: path, seed: mnemonicSeed)
