@@ -127,20 +127,20 @@ public class WalletContract : Contract {
      * @param address        Address destination
      * @param amount         BigInt in nano-coins
      * @param seqno          Int64
-     * @param payload        Cell, null
+     * @param payload        Cell, nil
      * @param sendMode       byte, 3
      * @param dummySignature Bool, false
-     * @param stateInit      Cell, null
+     * @param stateInit      Cell, nil
      * @return ExternalMessage
      */
     public func createTransferMessage(secretKey: Data,
                                address: Address,
                                amount: BigInt,
                                seqno: Int64,
-                               payload: Cell?,
+                               payload: Cell? = nil,
                                sendMode: UInt8,
                                dummySignature: Bool,
-                               stateInit: Cell?) throws -> ExternalMessage {
+                               stateInit: Cell? = nil) throws -> ExternalMessage {
         
         let orderHeader = try Contract.createInternalMessageHeader(dest: address, gramValue: amount)
         let order = try Contract.createCommonMsgInfo(header: orderHeader, stateInit: stateInit, body: payload)
@@ -162,7 +162,7 @@ public class WalletContract : Contract {
                                address: Address,
                                amount: BigInt,
                                seqno: Int64,
-                               payload:Cell) throws -> ExternalMessage {
+                               payload: Cell) throws -> ExternalMessage {
         return try createTransferMessage(secretKey: secretKey, address: address, amount: amount, seqno: seqno, payload: payload, sendMode: UInt8(3), dummySignature: false, stateInit: nil)
     }
     
@@ -205,7 +205,7 @@ public class WalletContract : Contract {
      * @param payload        Cell
      * @param sendMode       byte, 3
      * @param dummySignature Bool, false
-     * @param stateInit      Cell, null
+     * @param stateInit      Cell, nil
      * @return ExternalMessage
      */
     public func createTransferMessage(secretKey: Data,
@@ -213,9 +213,9 @@ public class WalletContract : Contract {
                                amount: BigInt,
                                seqno: Int64,
                                payload: Cell,
-                               sendMode: UInt8,
-                               dummySignature: Bool,
-                               stateInit: Cell) throws ->ExternalMessage {
+                               sendMode: UInt8 = UInt8(3),
+                               dummySignature: Bool = false,
+                               stateInit: Cell? = nil) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
             throw TonError.otherEror("address error")
         }
@@ -230,7 +230,7 @@ public class WalletContract : Contract {
      * @param payload        Data
      * @param sendMode       byte, 3
      * @param dummySignature Bool, false
-     * @param stateInit      Cell, null
+     * @param stateInit      Cell, nil
      * @return ExternalMessage
      */
     
@@ -239,9 +239,9 @@ public class WalletContract : Contract {
                                amount: BigInt,
                                seqno: Int64,
                                payload: Data,
-                               sendMode: UInt8,
-                               dummySignature: Bool,
-                               stateInit: Cell) throws ->ExternalMessage {
+                               sendMode: UInt8 = UInt8(3),
+                               dummySignature: Bool = false,
+                               stateInit: Cell? = nil) throws ->ExternalMessage {
         let payloadCell = try CellBuilder.beginCell().storeBytes(bytes: payload.bytes).endCell
         
         return try createTransferMessage(secretKey: secretKey, address: address, amount: amount, seqno: seqno, payload: payloadCell, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
@@ -255,7 +255,7 @@ public class WalletContract : Contract {
      * @param payload        Data
      * @param sendMode       byte, 3
      * @param dummySignature Bool, false
-     * @param stateInit      Cell, null
+     * @param stateInit      Cell, nil
      * @return ExternalMessage
      */
     public func createTransferMessage(secretKey: Data,
@@ -263,9 +263,9 @@ public class WalletContract : Contract {
                                amount: BigInt,
                                seqno: Int64,
                                payload: Data,
-                               sendMode: UInt8,
-                               dummySignature: Bool,
-                               stateInit: Cell) throws ->ExternalMessage {
+                               sendMode: UInt8 = UInt8(3),
+                               dummySignature: Bool = false,
+                               stateInit: Cell? = nil) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
             throw TonError.otherEror("address error")
         }
@@ -288,9 +288,9 @@ public class WalletContract : Contract {
                                amount: BigInt,
                                seqno: Int64,
                                payload: String,
-                               sendMode: UInt8,
-                               dummySignature: Bool,
-                               stateInit: Cell) throws -> ExternalMessage  {
+                               sendMode: UInt8 = UInt8(3),
+                               dummySignature: Bool = false,
+                               stateInit: Cell? = nil) throws -> ExternalMessage  {
         
         let payloadCell = CellBuilder.beginCell()
         
