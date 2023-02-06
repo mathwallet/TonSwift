@@ -149,7 +149,7 @@ public class WalletV4ContractR2: WalletContract {
         try signingMessage.bits.writeCoins(amount: params.amount)
         try signingMessage.bits.writeUInt(number: BigInt(params.queryId), bitLength: 64)
         
-        return try createExternalMessage(signingMessage: signingMessage,
+        return try createSignedExternalMessage(signingMessage: signingMessage,
                                          secretKey: params.secretKey,
                                          seqno: params.seqno,
                                          dummySignature: false)
