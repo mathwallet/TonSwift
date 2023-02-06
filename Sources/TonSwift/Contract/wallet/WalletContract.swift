@@ -31,7 +31,7 @@ public class WalletContract : Contract {
      * @param seqno Int64
      * @return Cell
      */
-    func createSigningMessage(seqno: Int64) throws -> Cell {
+    public func createSigningMessage(seqno: Int64) throws -> Cell {
         return try CellBuilder.beginCell().storeUint(number: BigInt(seqno), bitLength: 32).endCell
     }
     
@@ -41,7 +41,7 @@ public class WalletContract : Contract {
      * @param secretKey Data nacl.KeyPair.secretKey
      * @return InitExternalMessage
      */
-    func  createInitExternalMessage(secretKey: Data) throws -> InitExternalMessage {
+    public func createInitExternalMessage(secretKey: Data) throws -> InitExternalMessage {
         let publicKey = getOptions()?.publicKey ?? Data()
         if (publicKey.count == 0) {
             let keyPair = try TonKeypair(secretKey: secretKey)
@@ -77,7 +77,7 @@ public class WalletContract : Contract {
      * @param dummySignature Bool, flag to specify whether to use signature based on private key or fill the space with zeros.
      * @return ExternalMessage
      */
-    func createExternalMessage(signingMessage: Cell,
+    public func createExternalMessage(signingMessage: Cell,
                                secretKey: Data,
                                seqno: Int64,
                                dummySignature: Bool) throws -> ExternalMessage { // todo func false
@@ -133,7 +133,7 @@ public class WalletContract : Contract {
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: Address,
                                amount: BigInt,
                                seqno: Int64,
@@ -158,7 +158,7 @@ public class WalletContract : Contract {
      * @param seqno     Int64
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: Address,
                                amount: BigInt,
                                seqno: Int64,
@@ -173,7 +173,7 @@ public class WalletContract : Contract {
      * @param seqno     Int64
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: Address,
                                amount: BigInt,
                                seqno: Int64) throws -> ExternalMessage {
@@ -187,7 +187,7 @@ public class WalletContract : Contract {
      * @param seqno     Int64
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: String,
                                amount: BigInt,
                                seqno: Int64) throws ->ExternalMessage {
@@ -208,7 +208,7 @@ public class WalletContract : Contract {
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: String,
                                amount: BigInt,
                                seqno: Int64,
@@ -234,7 +234,7 @@ public class WalletContract : Contract {
      * @return ExternalMessage
      */
     
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: Address,
                                amount: BigInt,
                                seqno: Int64,
@@ -258,7 +258,7 @@ public class WalletContract : Contract {
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: String,
                                amount: BigInt,
                                seqno: Int64,
@@ -283,7 +283,7 @@ public class WalletContract : Contract {
      * @param stateInit      Cell, null
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: Address,
                                amount: BigInt,
                                seqno: Int64,
@@ -314,7 +314,7 @@ public class WalletContract : Contract {
      * @param stateInit      Cell
      * @return ExternalMessage
      */
-    func createTransferMessage(secretKey: Data,
+    public func createTransferMessage(secretKey: Data,
                                address: String,
                                amount: BigInt,
                                seqno: Int64,
@@ -327,26 +327,4 @@ public class WalletContract : Contract {
         }
         return try createTransferMessage(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: payload, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }
-    
-    /**
-     * Get current seqno
-     *
-     * @return Int64
-     */
-//    func getSeqno(tonlib: Tonlib) -> Int64 {
-//
-//        if (NSStringFromClass(self) == "SimpleWalletContractR1") {
-//            throw TonError.otherEror("simple wallet of revsion 1 does not have seqno method")
-//        }
-//
-//        let myAddress = getAddress()
-//        RunResult result = tonlib.runMethod(myAddress, "seqno")
-//        if (result.getExit_code() != 0) {
-//            throw new Error("method seqno returned an exit code " + result.getExit_code())
-//        }
-//
-//        let seqno = (TvmStackEntryNumber) result.getStack().get(0)
-//
-//        return seqno.getNumber().Int64Value()
-//    }
 }
