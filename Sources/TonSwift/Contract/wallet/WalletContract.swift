@@ -2,7 +2,7 @@
 //  WalletContract.swift
 //  
 //
-//  Created by 薛跃杰 on 2023/1/29.
+//  Created by xgblin on 2023/1/29.
 //
 
 import Foundation
@@ -192,7 +192,7 @@ public class WalletContract : Contract {
                                amount: BigInt,
                                seqno: Int64) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.message("address error")
+            throw TonError.otherEror("address error")
         }
         return try createTransferMessage(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: nil, sendMode: UInt8(3), dummySignature: false, stateInit: nil)
     }
@@ -217,7 +217,7 @@ public class WalletContract : Contract {
                                dummySignature: Bool,
                                stateInit: Cell) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.message("address error")
+            throw TonError.otherEror("address error")
         }
         return try createTransferMessage(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: payload, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }
@@ -267,7 +267,7 @@ public class WalletContract : Contract {
                                dummySignature: Bool,
                                stateInit: Cell) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.message("address error")
+            throw TonError.otherEror("address error")
         }
         return try createTransferMessage(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: payload, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }
@@ -323,7 +323,7 @@ public class WalletContract : Contract {
                                dummySignature: Bool,
                                stateInit: Cell) throws -> ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.message("address error")
+            throw TonError.otherEror("address error")
         }
         return try createTransferMessage(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: payload, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }
@@ -336,7 +336,7 @@ public class WalletContract : Contract {
 //    func getSeqno(tonlib: Tonlib) -> Int64 {
 //
 //        if (NSStringFromClass(self) == "SimpleWalletContractR1") {
-//            throw TonError.message("simple wallet of revsion 1 does not have seqno method")
+//            throw TonError.otherEror("simple wallet of revsion 1 does not have seqno method")
 //        }
 //
 //        let myAddress = getAddress()

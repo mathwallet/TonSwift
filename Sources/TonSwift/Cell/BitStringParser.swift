@@ -2,7 +2,7 @@
 //  BitStringParser.swift
 //  
 //
-//  Created by 薛跃杰 on 2023/1/12.
+//  Created by xgblin on 2023/1/12.
 //
 
 import Foundation

@@ -2,7 +2,7 @@
 //  ClosingConfig.swift
 //  
 //
-//  Created by 薛跃杰 on 2023/1/9.
+//  Created by xgblin on 2023/1/9.
 //
 
 import Foundation

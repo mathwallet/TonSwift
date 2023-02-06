@@ -2,7 +2,7 @@
 //  Contract.swift
 //  
 //
-//  Created by 薛跃杰 on 2023/1/9.
+//  Created by xgblin on 2023/1/9.
 //
 
 import Foundation
@@ -24,7 +24,7 @@ public class Contract {
      */
     public func createCodeCell() throws -> Cell {
         guard let code = getOptions()?.code else {
-            throw TonError.message("Contract: options.code is not defined")
+            throw TonError.otherEror("Contract: options.code is not defined")
         }
         return code
     }
@@ -51,7 +51,7 @@ public class Contract {
         
         let stateInitHash = try stateInit.hash()
         guard let _options = options, let wc = _options.wc else {
-            throw TonError.message("contract options nil")
+            throw TonError.otherEror("contract options nil")
         }
         let address = try Address.of(addressStr:"\(wc):\(stateInitHash.toHexString())" )
         return StateInit(stateInit: stateInit, address: address!, code: codeCell, data: dataCell)
@@ -77,16 +77,16 @@ public class Contract {
     public func createStateInit(code: Cell?, data: Cell?, library: Cell?, splitDepth: Cell?, ticktock: Cell?) throws -> Cell {
         
         if library != nil {
-            throw TonError.message("Library in state init is not implemented")
+            throw TonError.otherEror("Library in state init is not implemented")
             
         }
         
         if splitDepth != nil {
-            throw TonError.message("Split depth in state init is not implemented")
+            throw TonError.otherEror("Split depth in state init is not implemented")
         }
         
         if ticktock != nil  {
-            throw TonError.message("Ticktock in state init is not implemented")
+            throw TonError.otherEror("Ticktock in state init is not implemented")
         }
 
         let stateInit = CellBuilder.beginCell()
@@ -168,7 +168,7 @@ public class Contract {
         let _  = try message.storeAddress(address: dest)
         let _  = try message.storeCoins(coins: gramValue)
         guard let _currencyCollection = currencyCollection, _currencyCollection.count != 0 else {
-            throw TonError.message("Currency collections are not implemented yet")
+            throw TonError.otherEror("Currency collections are not implemented yet")
         }
         let _  = try message.storeBit(bit: _currencyCollection.count != 0)
         let _  = try message.storeCoins(coins: ihrFees)

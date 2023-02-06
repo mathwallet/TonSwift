@@ -2,7 +2,7 @@
 //  BocHeader.swift
 //  
 //
-//  Created by 薛跃杰 on 2023/1/5.
+//  Created by xgblin on 2023/1/5.
 //
 
 import Foundation

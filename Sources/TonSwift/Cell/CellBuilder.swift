@@ -2,7 +2,7 @@
 //  CellBuilder.swift
 //  
 //
-//  Created by 薛跃杰 on 2023/1/9.
+//  Created by xgblin on 2023/1/9.
 //
 
 import Foundation
@@ -97,13 +97,13 @@ public class CellBuilder: Cell {
             try! bits.writeInt(number: number, bitLength: bitLength)
             return self
         } else {
-            throw TonError.message("Can't store an Int, because its value allocates more space than provided.")
+            throw TonError.otherEror("Can't store an Int, because its value allocates more space than provided.")
         }
 //        if ((number.compareTo(sint.negate()) >= 0) && (number.compareTo(sint) < 0)) {
 //            bits.writeInt(number, bitLength);
 //            return this;
 //        } else {
-//            throw TonError.message("Can't store an Int, because its value allocates more space than provided.");
+//            throw TonError.otherEror("Can't store an Int, because its value allocates more space than provided.");
 //        }
     }
 
@@ -201,19 +201,19 @@ public class CellBuilder: Cell {
 
     func checkBitsOverflow(length: Int) throws {
         if (length > bits.getFreeBits()) {
-            throw TonError.message("Bits overflow. Can't add \(length) bits. \(bits.getFreeBits()) bits left.")
+            throw TonError.otherEror("Bits overflow. Can't add \(length) bits. \(bits.getFreeBits()) bits left.")
         }
     }
 
     func checkSign(i: BigInt) throws {
         if (i.signum() < 0) {
-            throw TonError.message("Integer \(i) must be unsigned")
+            throw TonError.otherEror("Integer \(i) must be unsigned")
         }
     }
 
     func checkRefsOverflow(count: Int) throws {
         if (count > (4 - refs.count)) {
-            throw TonError.message("Refs overflow. Can't add \(count) refs. \(4 - refs.count) refs left.")
+            throw TonError.otherEror("Refs overflow. Can't add \(count) refs. \(4 - refs.count) refs left.")
         }
     }
 }
