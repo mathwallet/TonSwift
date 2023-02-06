@@ -287,7 +287,7 @@ public class WalletContract : Contract {
                                address: Address,
                                amount: BigInt,
                                seqno: Int64,
-                               payload: String,
+                               payload: String = "",
                                sendMode: UInt8 = UInt8(3),
                                dummySignature: Bool = false,
                                stateInit: Cell? = nil) throws -> ExternalMessage  {
