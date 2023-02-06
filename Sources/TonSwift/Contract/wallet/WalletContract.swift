@@ -318,10 +318,10 @@ public class WalletContract : Contract {
                                                    address: String,
                                                    amount: BigInt,
                                                    seqno: Int64,
-                                                   payload: String,
-                                                   sendMode: UInt8,
-                                                   dummySignature: Bool,
-                                                   stateInit: Cell) throws -> ExternalMessage {
+                                                   payload: String = "",
+                                                   sendMode: UInt8 = UInt8(3),
+                                                   dummySignature: Bool = false,
+                                                   stateInit: Cell? = nil) throws -> ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
             throw TonError.otherEror("address error")
         }
