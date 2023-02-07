@@ -24,7 +24,7 @@ public class TonClientBase {
             "method": method,
             "params": params ?? [String: Any]()
         ] as [String : Any]
-        return POST(path: "/v1/transactions", parameters: parameters)
+        return POST(path: "/api/v2/jsonRPC", parameters: parameters)
     }
     
     public func runGetMethod<T: Codable>(address: String, method: String, params: [String: Any] = [String: Any]()) -> Promise<T> {
@@ -36,13 +36,22 @@ public class TonClientBase {
         return send(method: "runGetMethod", params: parameters)
     }
     
-    public func GET<T: Codable>(path: String) -> Promise<T> {
+    public func GET<T: Codable>(path: String, parameters: [String: Any]? = nil) -> Promise<T> {
         let rp = Promise<Data>.pending()
         var task: URLSessionTask? = nil
         let queue = DispatchQueue(label: "ton.get")
         queue.async {
+            var getUrl = self.url.appendingPathComponent(path)
+            if let p = parameters, !p.isEmpty {
+                var urlComponents = URLComponents(url: getUrl, resolvingAgainstBaseURL: true)!
+                var items = urlComponents.queryItems ?? []
+                items += p.map({ URLQueryItem(name: $0, value: "\($1)") })
+                urlComponents.queryItems = items
+                getUrl = urlComponents.url!
+            }
+            
             //            debugPrint("GET \(url)")
-            var urlRequest = URLRequest(url: self.url, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
+            var urlRequest = URLRequest(url: getUrl, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
             urlRequest.httpMethod = "GET"
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -88,7 +97,8 @@ public class TonClientBase {
         let queue = DispatchQueue(label: "ton.post")
         queue.async {
             do {
-                var urlRequest = URLRequest(url: self.url, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
+                let postUrl = self.url.appendingPathComponent(path)
+                var urlRequest = URLRequest(url: postUrl, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
                 urlRequest.httpMethod = "POST"
                 
                 for key in headers.keys {
