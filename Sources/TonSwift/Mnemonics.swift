@@ -12,6 +12,13 @@ import CryptoSwift
 public struct Mnemonics {
     
     public static func isValid(_ mnemonics: String, password: String) -> Bool {
+        let mnemonicArr = mnemonics.components(separatedBy: " ")
+        guard mnemonicArr.count < 24 else {return false}
+        for word in mnemonicArr {
+            if !BIP39Language.english.words.contains(word) {
+                return false
+            }
+        }
         guard let entropy = toEntropy(mnemonics: mnemonics, key: password) else { return false}
         return isBasicSeed(entropy: entropy)
     }
