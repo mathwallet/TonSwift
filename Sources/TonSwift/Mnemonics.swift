@@ -8,34 +8,34 @@
 import Foundation
 import BIP39swift
 import CryptoSwift
-import CommonCrypto
 
 public struct Mnemonics {
-    static public func random() -> String? {
-        guard let mnemonic = try? BIP39.generateMnemonics(bitsOfEntropy: 256) else{
-            return nil
-        }
-        return mnemonic
+    
+    public static func isValid(_ mnemonics: String, password: String) -> Bool {
+        guard let entropy = toEntropy(mnemonics: mnemonics, key: password) else { return false}
+        return isBasicSeed(entropy: entropy)
+    }
+    
+    public static func isBasicSeed(entropy: Data) -> Bool {
+        let saltData = "TON seed version".data(using: .utf8)!
+        guard let seedArray = try? PKCS5.PBKDF2(password: entropy.bytes, salt: saltData.bytes, iterations: 390, variant: HMAC.Variant.sha512).calculate() else {return false}
+        return seedArray[0] == 0
     }
     
     static public func seedFromMmemonics(_ mnemonics: String, saltString: String, password: String = "", language: BIP39Language = BIP39Language.english) -> Data? {
-        let valid = toEntropy(mnemonics: mnemonics) != nil
-        if (!valid) {
-            return nil
-        }
-        guard let mnemData = mnemonics.decomposedStringWithCompatibilityMapping.data(using: .utf8) else {return nil}
+        guard let entropy = toEntropy(mnemonics: mnemonics, key: "") else { return nil}
         let salt = saltString + password
         guard let saltData = salt.decomposedStringWithCompatibilityMapping.data(using: .utf8) else {return nil}
-        guard let seedArray = try? PKCS5.PBKDF2(password: mnemData.bytes, salt: saltData.bytes, iterations: 2048, keyLength: 64, variant: HMAC.Variant.sha512).calculate() else {return nil}
+        guard let seedArray = try? PKCS5.PBKDF2(password: entropy.bytes, salt: saltData.bytes, iterations: 100000, keyLength: 32, variant: HMAC.Variant.sha512).calculate() else {return nil}
         let seed = Data(seedArray)
         return seed
     }
     
-    static public func toEntropy(mnemonics: String) -> Data? {
-        guard let mnemData = mnemonics.decomposedStringWithCompatibilityMapping.data(using: .utf8) else {return nil}
-        let key = "HmacSHA512".data(using: .utf8)!
-        var digest = [UInt8](repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
-        CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA512), key.bytes, key.count, mnemData.bytes, mnemData.count, &digest)
-        return Data(digest)
+    static public func toEntropy(mnemonics: String, key: String) -> Data? {
+        guard let mnemData = mnemonics.data(using: .utf8) else {return nil}
+        guard let keyData = key.data(using: .utf8) else {return nil}
+        let hmac:Authenticator = HMAC(key: mnemData.bytes, variant: .sha2(.sha512))
+        guard let ent = try? hmac.authenticate(keyData.bytes) else {return nil }
+        return Data(ent)
     }
 }

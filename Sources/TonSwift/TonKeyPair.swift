@@ -11,7 +11,6 @@ import BIP32Swift
 import TweetNacl
 
 public struct TonKeypair {
-    public var derivePath: String?
     public var secretKey: Data
     public var publicKey: Data
     
@@ -26,29 +25,28 @@ public struct TonKeypair {
         try self.init(secretKey: secretKey)
     }
     
-    public init(mnemonics: String, path: String) throws {
+    public init(mnemonics: String) throws {
         guard let mnemonicSeed = Mnemonics.seedFromMmemonics(mnemonics, saltString: "TON default seed") else {
             throw Error.invalidMnemonic
         }
-        let (seed, _) = TonKeypair.ed25519DeriveKey(path: path, seed: mnemonicSeed)
-        try self.init(seed: seed)
-        self.derivePath = path
+//        let (seed, _) = TonKeypair.ed25519DeriveKey(path: path, seed: mnemonicSeed)
+        try self.init(seed: mnemonicSeed)
     }
     
     public static func randomKeyPair() throws -> TonKeypair {
         guard let mnemonic = try? BIP39.generateMnemonics(bitsOfEntropy: 256) else{
             throw TonKeypair.Error.invalidMnemonic
         }
-        return try TonKeypair(mnemonics: mnemonic, path: "")
+        return try TonKeypair(mnemonics: mnemonic)
     }
     
-    public static func ed25519DeriveKey(path: String, seed: Data) -> (key: Data, chainCode: Data) {
-        return NaclSign.KeyPair.deriveKey(path: path, seed: seed)
-    }
-    
-    public static func ed25519DeriveKey(path: String, key: Data, chainCode: Data) -> (key: Data, chainCode: Data) {
-        return NaclSign.KeyPair.deriveKey(path: path, key: key, chainCode: chainCode)
-    }
+//    public static func ed25519DeriveKey(path: String, seed: Data) -> (key: Data, chainCode: Data) {
+//        return NaclSign.KeyPair.deriveKey(path: path, seed: seed)
+//    }
+//
+//    public static func ed25519DeriveKey(path: String, key: Data, chainCode: Data) -> (key: Data, chainCode: Data) {
+//        return NaclSign.KeyPair.deriveKey(path: path, key: key, chainCode: chainCode)
+//    }
 }
 
 // MARK: - Sign&Verify

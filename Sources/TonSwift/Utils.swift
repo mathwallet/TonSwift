@@ -8,6 +8,7 @@
 import Foundation
 import CryptoSwift
 import TweetNacl
+import CommonCrypto
 
 public struct Utils {
     public init() {}
