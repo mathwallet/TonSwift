@@ -7,7 +7,7 @@
 
 import Foundation
 import BIP39swift
-import BIP32Swift
+//import BIP32Swift
 import TweetNacl
 
 public struct TonKeypair {

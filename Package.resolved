@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "Base58Swift",
-        "repositoryURL": "https://github.com/mathwallet/Base58Swift.git",
-        "state": {
-          "branch": null,
-          "revision": "04ccae070ac6f3117db11af864a04229f7c1e025",
-          "version": "0.0.1"
-        }
-      },
-      {
         "package": "BigInt",
         "repositoryURL": "https://github.com/attaswift/BigInt.git",
         "state": {
@@ -38,30 +29,21 @@
         }
       },
       {
+        "package": "JOSESwift",
+        "repositoryURL": "https://github.com/lukereichold/JOSESwift.git",
+        "state": {
+          "branch": null,
+          "revision": "864d6a014a4aa343dd47f3804f12b8a42a7b21eb",
+          "version": "2.2.4"
+        }
+      },
+      {
         "package": "PromiseKit",
         "repositoryURL": "https://github.com/mxcl/PromiseKit.git",
         "state": {
           "branch": null,
           "revision": "065a93d0077d54710c03e9d738e4d3998615fe82",
           "version": "6.20.0"
-        }
-      },
-      {
-        "package": "RIPEMDSwift",
-        "repositoryURL": "https://github.com/mathwallet/RIPEMDSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "1a9b1487d1880585c8cc46e26b6d9838184f7858",
-          "version": "0.0.1"
-        }
-      },
-      {
-        "package": "Secp256k1Swift",
-        "repositoryURL": "https://github.com/mathwallet/Secp256k1Swift.git",
-        "state": {
-          "branch": null,
-          "revision": "56bc47725ea218127c47b20e0d9bc93f7a01f923",
-          "version": "1.3.1"
         }
       },
       {

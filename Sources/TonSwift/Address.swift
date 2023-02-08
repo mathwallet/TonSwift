@@ -47,7 +47,7 @@ public class Address {
             }
         }
         let arr = address.components(separatedBy: ":")
-        if arr.count > 0 {
+        if arr.count > 1 {
 
             if (arr.count != 2) {
                 return nil
