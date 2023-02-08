@@ -11,10 +11,12 @@ import PromiseKit
 public class TonClientBase {
     public var url: URL
     private var session: URLSession
+    private var apiKey: String
     
-    public init(url: URL) {
+    public init(url: URL, apiKey: String) {
         self.url = url
         self.session = URLSession(configuration: .default)
+        self.apiKey = apiKey
     }
     
     public func send<T: Codable>(method: String, params: [String: Any]? = nil) -> Promise<T> {
@@ -24,7 +26,7 @@ public class TonClientBase {
             "method": method,
             "params": params ?? [String: Any]()
         ] as [String : Any]
-        return POST(path: "/api/v2/jsonRPC", parameters: parameters)
+        return POST(path: "/api/v2/jsonRPC", parameters: parameters, headers: ["X-API-Key" : self.apiKey])
     }
     
     public func runGetMethod<T: Codable>(address: String, method: String, params: [String: Any] = [String: Any]()) -> Promise<T> {

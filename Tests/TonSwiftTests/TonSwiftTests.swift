@@ -22,7 +22,7 @@ final class TonSwiftTests: XCTestCase {
         let reqeustExpectation = expectation(description: "Tests")
         DispatchQueue.global().async {
             do {
-                let client = TonClient(url: URL(string: "https://toncenter.com/")!)
+                let client = TonClient(url: URL(string: "https://toncenter.com/")!,apiKey: "")
                 let result = try client.getChainInfo().wait()
                 debugPrint(result)
                 
