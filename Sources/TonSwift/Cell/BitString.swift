@@ -306,7 +306,7 @@ public class BitString {
     public func writeAddress(address: Address?) throws {
         if let _address = address {
             try writeUInt(number: BigInt(2), bitLength: 2)
-            try writeUInt(number: BigInt(2), bitLength: 1);
+            try writeUInt(number: BigInt.zero, bitLength: 1);
             try writeInt(number: BigInt(_address.wc), bitLength: 8)
             try writeBytes(ui8s: _address.hashPart.bytes)
         } else {

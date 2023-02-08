@@ -50,10 +50,7 @@ public class Contract {
         let stateInit = try createStateInit(code: codeCell, data: dataCell)
         
         let stateInitHash = try stateInit.hash()
-        guard let _options = options, let wc = _options.wc else {
-            throw TonError.otherEror("contract options nil")
-        }
-        let address = try Address.of(addressStr:"\(wc):\(stateInitHash.toHexString())" )
+        let address = try Address.of(addressStr:"\(self.options?.wc ?? 0):\(stateInitHash.toHexString())" )
         return StateInit(stateInit: stateInit, address: address!, code: codeCell, data: dataCell)
     }
 
@@ -167,7 +164,7 @@ public class Contract {
         let _  = try message.storeAddress(address: src)
         let _  = try message.storeAddress(address: dest)
         let _  = try message.storeCoins(coins: gramValue)
-        guard let _currencyCollection = currencyCollection, _currencyCollection.count != 0 else {
+        guard let _currencyCollection = currencyCollection, _currencyCollection.count == 0 else {
             throw TonError.otherEror("Currency collections are not implemented yet")
         }
         let _  = try message.storeBit(bit: _currencyCollection.count != 0)

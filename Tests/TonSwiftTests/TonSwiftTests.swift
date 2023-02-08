@@ -1,4 +1,5 @@
 import XCTest
+import BigInt
 @testable import TonSwift
 
 final class TonSwiftTests: XCTestCase {
@@ -39,6 +40,16 @@ final class TonSwiftTests: XCTestCase {
             let address = Address(addressStr: "EQCBlo5osdqQWEc4YRVaMB7DcP5PVm1qKknAmkttUIclyhgS")
         } catch {
             
+        }
+    }
+    func testTransactionExample() throws {
+        do {
+            let keypair = try TonKeypair(seed: Data(hex: "d2a351c1dcb250fd5380eb4ce3e1d2594c575398fa8d0dadc3987346d5ba453e"))
+            let contract: WalletContract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey)).create() as! WalletContract
+            let signedMessage = try contract.createSignedTransferMessagePayloadString(secretKey: keypair.secretKey, address: "EQCBlo5osdqQWEc4YRVaMB7DcP5PVm1qKknAmkttUIclyhgS", amount: BigInt("1000000"), seqno: 9, payload: "123")
+            debugPrint(try signedMessage.message.toBocBase64())
+        } catch let error {
+            debugPrint(error)
         }
     }
     

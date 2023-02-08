@@ -480,7 +480,7 @@ public class Cell {
             guard let _subCell = subCell else {
                 throw TonError.otherEror("Cell refs error")
             }
-            let res = try treeWalk(cell: _subCell, topologicalOrderArray: topologicalOrderArray, indexHashmap: indexHashmap, parentHash: cellHash)
+            let res = try treeWalk(cell: _subCell, topologicalOrderArray: newTopologicalOrderArray, indexHashmap: newIndexHashmap, parentHash: cellHash)
             newTopologicalOrderArray = res.topologicalOrderArray
             newIndexHashmap = res.indexHashmap
         }
