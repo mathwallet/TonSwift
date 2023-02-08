@@ -8,37 +8,34 @@
 import Foundation
 import BIP39swift
 import CryptoSwift
-import JOSESwift
-import Security.SecRandom
+import CommonCrypto
+
 
 public struct Mnemonics {
     
-    public static func generate(count: Int, password: String) -> String {
-        var words = [String]()
-        for _ in 0..<count {
-            var index = -1
-            while (index > 2047 || index < 0) {
-                if let number = try? secureRandomNumber() {
-                    index = Int(number)
+    public static func generate(wordsCount: Int, password: String) -> String {
+        var mnemonicArray: [String] = []
+        while true {
+            mnemonicArray = []
+            let rnd = [Int](repeating: 0, count: wordsCount).map({ _ in Int.random(in: 0..<Int.max) })
+            for i in 0..<wordsCount {
+                mnemonicArray.append(BIP39Language.english.words[rnd[i] % (BIP39Language.english.words.count - 1)])
+            }
+            let mnemonic =  mnemonicArray.joined(separator: " ")
+            
+            if password.count > 0 {
+                if !isPasswordNeeded(mnemonic: mnemonic) {
+                    continue
                 }
             }
-            print(index)
-            words.append(BIP39Language.english.words[index])
+            
+            if !isBasicSeed(entropy: toEntropy(mnemonics: mnemonic, key: password)) {
+                continue
+            }
+            
+            break
         }
-        
-        return words.joined(separator: " ")
-    }
-    
-    private static func secureRandomNumber() throws -> UInt32 {
-        var randomNumber: UInt32 = 0
-        try withUnsafeMutablePointer(to: &randomNumber) {
-                  try $0.withMemoryRebound(to: UInt8.self, capacity: 2) { (randomBytes: UnsafeMutablePointer<UInt8>) -> Void in
-                      guard (SecRandomCopyBytes(kSecRandomDefault, 2, randomBytes) == 0) else {
-                          throw TonError.unknow
-                      }
-                  }
-              }
-        return randomNumber
+        return mnemonicArray.joined(separator: " ")
     }
     
     public static func isValid(_ mnemonics: String, password: String) -> Bool {
@@ -49,40 +46,67 @@ public struct Mnemonics {
                 return false
             }
         }
-        guard let entropy = toEntropy(mnemonics: mnemonics, key: password) else { return false}
+        let entropy = toEntropy(mnemonics: mnemonics, key: password)
         return isBasicSeed(entropy: entropy)
     }
     
     public static func isBasicSeed(entropy: Data) -> Bool {
         let saltData = "TON seed version".data(using: .utf8)!
-        guard let seedArray = try? PKCS5.PBKDF2(password: entropy.bytes, salt: saltData.bytes, iterations: 390, variant: HMAC.Variant.sha512).calculate() else {return false}
-        return seedArray[0] == 0
+        let seed = pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: max(1, 100000 / 256))
+        return seed[0] == 0
     }
     
     static public func seedFromMmemonics(_ mnemonics: String, saltString: String, password: String = "", language: BIP39Language = BIP39Language.english) -> Data? {
-        guard let entropy = toEntropy(mnemonics: mnemonics, key: "") else { return nil}
-        let salt = saltString + password
-        guard let saltData = salt.decomposedStringWithCompatibilityMapping.data(using: .utf8) else {return nil}
-        guard let seedArray = try? PKCS5.PBKDF2(password: entropy.bytes, salt: saltData.bytes, iterations: 100000, keyLength: 32, variant: HMAC.Variant.sha512).calculate() else {return nil}
-        let seed = Data(seedArray)
-        return seed
+        let entropy = toEntropy(mnemonics: mnemonics, key: "")
+        let saltData = "TON default seed".data(using: .utf8)!
+        return Data(pbkdf2Sha512(phrase: entropy, salt: saltData))
     }
     
     public static func isPasswordNeeded(mnemonic: String) -> Bool {
-        guard let entropy = toEntropy(mnemonics: mnemonic,key:"") else {return false}
+        let entropy = toEntropy(mnemonics: mnemonic,key:"")
         return isPasswordSeed(entropy: entropy) && !isBasicSeed(entropy: entropy)
     }
     
     public static func isPasswordSeed(entropy: Data) -> Bool {
-        guard let seed = try? PKCS5.PBKDF2(password: entropy.bytes, salt: "TON fast seed version".data(using: .utf8)!.bytes, iterations: 1, keyLength: 32, variant: HMAC.Variant.sha512).calculate() else {return false}
+        let saltData = "TON default seed".data(using: .utf8)!
+        let seed = pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: 1)
         return seed[0] == 1
     }
     
-    static public func toEntropy(mnemonics: String, key: String) -> Data? {
-        guard let mnemData = mnemonics.decomposedStringWithCompatibilityMapping.data(using: .utf8) else {return nil}
-        guard let keyData = key.data(using: .utf8) else {return nil}
-        let hmac:Authenticator = HMAC(key: mnemData.bytes, variant: .sha2(.sha512))
-        guard let ent = try? hmac.authenticate(keyData.bytes) else {return nil }
-        return Data(ent)
+    static public func toEntropy(mnemonics: String, key: String) -> Data {
+        return hmacSha512(phrase: mnemonics, password: key)
+    }
+
+    public static func pbkdf2Sha512(phrase: Data, salt: Data, iterations: Int = 100000, keyLength: Int = 64) -> [UInt8] {
+        var bytes = [UInt8](repeating: 0, count: keyLength)
+        
+        _ = bytes.withUnsafeMutableBytes { (outputBytes: UnsafeMutableRawBufferPointer) in
+            CCKeyDerivationPBKDF(
+                CCPBKDFAlgorithm(kCCPBKDF2),
+                phrase.map({ Int8(bitPattern: $0) }),
+                phrase.count,
+                [UInt8](salt),
+                salt.count,
+                CCPBKDFAlgorithm(kCCPRFHmacAlgSHA512),
+                UInt32(iterations),
+                outputBytes.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                keyLength
+            )
+        }
+        
+        return bytes
+    }
+    
+    public static func hmacSha512(phrase: String, password: String) -> Data {
+        let count = Int(CC_SHA512_DIGEST_LENGTH)
+        var digest = [UInt8](repeating: 0, count: count)
+        CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA512),
+               phrase,
+               phrase.count,
+               password,
+               password.count,
+               &digest)
+        
+        return Data(bytes: digest, count: count)
     }
 }

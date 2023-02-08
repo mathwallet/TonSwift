@@ -7,10 +7,8 @@ final class TonSwiftTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        var aa = Mnemonics.generate(count: 24, password: "")
-        let ss = Mnemonics.isValid(aa, password:"")
         do {
-            let keypair = try TonKeypair.randomKeyPair()
+            let keypair = try TonKeypair(mnemonics: "speak intact staff better relief amount bamboo marble scrap advance dice legal alter portion mean father law coffee income moral resource pull there slice")
             let contract = try WalletV4ContractR2(options: Options(publicKey: keypair.publicKey, wc: Int64(0)))
             debugPrint(try contract!.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: true))
         } catch let e {
