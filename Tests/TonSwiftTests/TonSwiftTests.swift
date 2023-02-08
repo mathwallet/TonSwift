@@ -34,4 +34,12 @@ final class TonSwiftTests: XCTestCase {
         wait(for: [reqeustExpectation], timeout: 30)
     }
     
+    func testAddressExample() throws {
+        do {
+            let address = Address(addressStr: "EQCBlo5osdqQWEc4YRVaMB7DcP5PVm1qKknAmkttUIclyhgS")
+        } catch {
+            
+        }
+    }
+    
 }
