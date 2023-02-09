@@ -60,8 +60,7 @@ public class WalletV4ContractR2: WalletContract {
     public func createSigningMessage(seqno: Int64, withoutOp: Bool) throws -> Cell {
         
         let message = CellBuilder.beginCell()
-        
-        let _ = try message.storeUint(number: BigInt(getOptions().walletId!), bitLength: 32)
+        let _ = try message.storeUint(number: BigInt(options!.walletId ?? 0), bitLength: 32)
         
         if (seqno == 0) {
             for _ in 0..<32 {
@@ -69,7 +68,7 @@ public class WalletV4ContractR2: WalletContract {
             }
         } else {
             let timeInterval = Date().timeIntervalSince1970
-            let timestamp = Int64(floor(timeInterval / 1e3))
+            let timestamp = Int64(timeInterval)
             let _ = try message.storeUint(number: BigInt(timestamp + 60), bitLength: 32)
         }
         
