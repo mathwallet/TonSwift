@@ -16,11 +16,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "TweetNacl", url: "https://github.com/lishuailibertine/tweetnacl-swiftwrap", from: "1.0.5"),
         .package(name:"BIP39swift", url: "https://github.com/mathwallet/BIP39swift", from: "1.0.1"),
-//        .package(name: "Secp256k1Swift", url: "https://github.com/mathwallet/Secp256k1Swift.git", from: "1.2.0"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.4.1"),
-        .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/mxcl/PromiseKit.git", .upToNextMajor(from: "6.8.4")),
-        .package(url: "https://github.com/lukereichold/JOSESwift.git", .upToNextMajor(from: "2.2.4")),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0")
     ],
     targets: [
@@ -30,11 +26,7 @@ let package = Package(
             name: "TonSwift",
             dependencies: ["TweetNacl",
                            "BIP39swift",
-//                           .product(name: "BIP32Swift", package: "Secp256k1Swift"),
-                           "CryptoSwift",
-                           .product(name: "Atomics", package: "swift-atomics"),
                            "PromiseKit",
-                           "JOSESwift",
                            "BigInt"
                           ]),
         .testTarget(

@@ -7,7 +7,6 @@
 
 import Foundation
 import BigInt
-import CryptoSwift
 
 public class Address {
 

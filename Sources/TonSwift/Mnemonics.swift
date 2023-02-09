@@ -7,7 +7,6 @@
 
 import Foundation
 import BIP39swift
-import CryptoSwift
 import CommonCrypto
 
 

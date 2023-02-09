@@ -29,30 +29,12 @@
         }
       },
       {
-        "package": "JOSESwift",
-        "repositoryURL": "https://github.com/lukereichold/JOSESwift.git",
-        "state": {
-          "branch": null,
-          "revision": "864d6a014a4aa343dd47f3804f12b8a42a7b21eb",
-          "version": "2.2.4"
-        }
-      },
-      {
         "package": "PromiseKit",
         "repositoryURL": "https://github.com/mxcl/PromiseKit.git",
         "state": {
           "branch": null,
-          "revision": "065a93d0077d54710c03e9d738e4d3998615fe82",
-          "version": "6.20.0"
-        }
-      },
-      {
-        "package": "swift-atomics",
-        "repositoryURL": "https://github.com/apple/swift-atomics.git",
-        "state": {
-          "branch": null,
-          "revision": "ff3d2212b6b093db7f177d0855adbc4ef9c5f036",
-          "version": "1.0.3"
+          "revision": "5b90042bb419e6f3b1719c973f37e1eab46ce991",
+          "version": "6.21.0"
         }
       },
       {
