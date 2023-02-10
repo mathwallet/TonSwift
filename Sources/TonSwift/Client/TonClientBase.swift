@@ -152,8 +152,8 @@ public class TonClientBase {
                     throw TonError.unknow
                 }
                 return data
-            } catch {
-                throw TonError.providerError("Parameter error or received wrong message")
+            } catch let error {
+                throw error
             }
         }
     }
