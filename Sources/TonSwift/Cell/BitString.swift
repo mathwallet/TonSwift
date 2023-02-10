@@ -111,7 +111,7 @@ public class BitString {
         guard checkRange(n: n) else {
             throw TonError.otherEror("BitString overflow")
         }
-        array[(n / 8)] = array[(n / 8)] & (~(1 << (7 - (n % 8))))
+        array[(n / 8)] |= 1 << (7 - (n % 8))
     }
 
     /**
@@ -123,7 +123,7 @@ public class BitString {
         guard checkRange(n: n) else {
             throw TonError.otherEror("BitString overflow")
         }
-        array[(n / 8)] = array[(n / 8)] ^ (1 << (7 - (n % 8)))
+        array[(n / 8)] ^= 1 << (7 - (n % 8))
     }
 
     /**
@@ -132,11 +132,24 @@ public class BitString {
      * @param b Bool
      */
     public func writeBit(b: Bool) throws {
-        if (b) {
-            try on(n: writeCursor)
-        } else {
-            try off(n: writeCursor)
+//        if (b) {
+//            try on(n: writeCursor)
+//        } else {
+//            try off(n: writeCursor)
+//        }
+//        writeCursor += 1
+        try writeBit(value: b ? 1:0)
+    }
+    
+    public func writeBit(value: Int) throws {
+        if writeCursor > array.count * 8 {
+            throw TonError.otherEror("BitBuilder overflow")
         }
+        
+        if value > 0 {
+            array[writeCursor / 8] |= 1 << (7 - (writeCursor % 8));
+        }
+        
         writeCursor += 1
     }
 
