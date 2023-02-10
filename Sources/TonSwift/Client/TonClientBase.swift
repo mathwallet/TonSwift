@@ -143,7 +143,10 @@ public class TonClientBase {
             do {
                 let result = try decoder.decode(TonRPCResult<T>.self, from: data)
                 guard result.ok == true else {
-                    throw TonError.otherEror(result.error!)
+                    if let errorStr = result.error {
+                        throw TonError.otherEror(errorStr)
+                    }
+                    throw TonError.unknow
                 }
                 guard let data = result.result else {
                     throw TonError.unknow

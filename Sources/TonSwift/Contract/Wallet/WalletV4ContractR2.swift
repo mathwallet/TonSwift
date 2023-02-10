@@ -68,8 +68,8 @@ public class WalletV4ContractR2: WalletContract {
             }
         } else {
             let timeInterval = Date().timeIntervalSince1970
-            let timestamp = Int64(timeInterval)
-            let _ = try message.storeUint(number: BigInt(timestamp + 60), bitLength: 32)
+            let timestamp = Int64(timeInterval) + Int64(60)
+            let _ = try message.storeUint(number: BigInt(timestamp), bitLength: 32)
         }
         
         let _ = try message.storeUint(number: BigInt(seqno), bitLength: 32)

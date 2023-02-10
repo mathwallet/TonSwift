@@ -12,8 +12,8 @@ public struct TonRPCResult<T: Codable>: Codable {
     public let ok: Bool
     public let error: String?
     public let result: T?
-    public let jsonrpc: String
-    public let id: String
+    public let jsonrpc: String?
+    public let id: String?
 }
 
 public struct ChainInfoResult: Codable {
