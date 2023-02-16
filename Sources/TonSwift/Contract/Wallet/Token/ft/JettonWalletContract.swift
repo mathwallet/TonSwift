@@ -47,7 +47,7 @@ public class JettonWalletContract : Contract {
     }
     
     /** * @return Cell cell contains nft data */
-    public func createTransferBody(queryId: Int64,
+    public static func createTransferBody(queryId: Int64,
                                    jettonAmount: BigInt,
                                    toAddress: Address,
                                    responseAddress: Address,
@@ -69,7 +69,7 @@ public class JettonWalletContract : Contract {
     }
     
     /** * @param queryId long * @param jettonAmount BigInteger * @param responseAddress Address */
-    public func createBurnBody(queryId: Int64, jettonAmount: BigInt, responseAddress: Address) throws -> Cell {
+    public static func createBurnBody(queryId: Int64, jettonAmount: BigInt, responseAddress: Address) throws -> Cell {
         let cell = CellBuilder.beginCell()
         let _ = try cell.storeUint(number: 0x595f07bc, bitLength: 32)
         let _ = try cell.bits.writeUInt(number: queryId, bitLength: 64)
