@@ -7,12 +7,12 @@
 
 import Foundation
 import BIP39swift
-//import BIP32Swift
 import TweetNacl
 
 public struct TonKeypair {
     public var secretKey: Data
     public var publicKey: Data
+    public var mnemonics: String?
     
     public init(secretKey: Data) throws {
         self.secretKey = secretKey
@@ -29,8 +29,8 @@ public struct TonKeypair {
         guard let mnemonicSeed = Mnemonics.seedFromMmemonics(mnemonics, saltString: "TON default seed") else {
             throw Error.invalidMnemonic
         }
-//        let (seed, _) = TonKeypair.ed25519DeriveKey(path: path, seed: mnemonicSeed)
         try self.init(seed: mnemonicSeed)
+        self.mnemonics = mnemonics
     }
     
     public static func randomKeyPair() throws -> TonKeypair {
@@ -39,14 +39,6 @@ public struct TonKeypair {
         }
         return try TonKeypair(mnemonics: mnemonic)
     }
-    
-//    public static func ed25519DeriveKey(path: String, seed: Data) -> (key: Data, chainCode: Data) {
-//        return NaclSign.KeyPair.deriveKey(path: path, seed: seed)
-//    }
-//
-//    public static func ed25519DeriveKey(path: String, key: Data, chainCode: Data) -> (key: Data, chainCode: Data) {
-//        return NaclSign.KeyPair.deriveKey(path: path, key: key, chainCode: chainCode)
-//    }
 }
 
 // MARK: - Sign&Verify

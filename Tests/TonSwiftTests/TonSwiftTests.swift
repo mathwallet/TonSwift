@@ -9,6 +9,15 @@ final class TonSwiftTests: XCTestCase {
         // results.
     }
     
+    func testKeypairExample() throws {
+        let keypair = try TonKeypair.randomKeyPair()
+        let contract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey, wc: Int64(0))).create()
+        print(keypair.mnemonics!)
+        print(keypair.publicKey.toHexString())
+        print(keypair.secretKey.toHexString())
+        print(try! contract.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: true))
+    }
+    
     func testClickExample() throws {
         let reqeustExpectation = expectation(description: "Tests")
         DispatchQueue.global().async {
