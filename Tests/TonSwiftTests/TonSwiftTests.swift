@@ -50,7 +50,9 @@ final class TonSwiftTests: XCTestCase {
             do {
                 let client = TonClient(url: URL(string: "https://toncenter.com")!,apiKey: "")
                 let result = try client.getJettonWalletAddress(ownerAddress: "EQCVuwSIBGJU0fY4Waw4K2kakJAMayY-E4COTv-L3pfTNVgs", mintAddress: "EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE").wait()
+                let balance = try client.getAddressBalance(address: result).wait()
                 debugPrint(result)
+                debugPrint(balance)
             } catch let error {
                 debugPrint(error)
             }

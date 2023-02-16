@@ -25,7 +25,7 @@ public class TonClient: TonClientBase {
     public func getSeqno(address: String) -> Promise<Int64> {
         return Promise{ seal in
             runGetMethod(address: address, method: "seqno").done { (result: RunGetRunMethodResult) in
-                seal.fulfill(result.seqno ?? 0)
+                seal.fulfill(result.num ?? 0)
             }.catch { error in
                 seal.reject(error)
             }
@@ -70,6 +70,24 @@ extension TonClient {
                     seal.fulfill(address.toString(isUserFriendly: true, isUrlSafe: true, isBounceable: true))
                 } else {
                     seal.reject(TonError.otherError("get wallet address error"))
+                }
+            }.catch { error in
+                seal.reject(error)
+            }
+        }
+    }
+    
+    public func getJettonWalletData(address: String) -> Promise<RunGetRunMethodResult> {
+        return runGetMethod(address: address, method: "get_wallet_data")
+    }
+    
+    public func getJettonWalletBalance(address: String) -> Promise<String> {
+        return Promise{ seal in
+            getJettonWalletData(address: address).done { (result: RunGetRunMethodResult) in
+                if let num = result.num {
+                    seal.fulfill(String(num))
+                } else {
+                    seal.reject(TonError.otherError("get wallet data error"))
                 }
             }.catch { error in
                 seal.reject(error)

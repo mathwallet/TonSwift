@@ -70,7 +70,7 @@ public struct RunGetRunMethodResult: Codable {
     public let exitCode: Int
     public let extra: String
     
-    public var seqno: Int64? {
+    public var num: Int64? {
         for i in 0..<stack.count {
             if stack[i][0].description == "num" {
                 let value = stack[0][1].description
