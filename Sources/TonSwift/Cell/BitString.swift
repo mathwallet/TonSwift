@@ -97,7 +97,7 @@ public class BitString {
      */
     func on(n: Int) throws {
         guard checkRange(n: n) else {
-            throw TonError.otherEror("BitString overflow")
+            throw TonError.otherError("BitString overflow")
         }
         array[(n / 8)] = array[(n / 8)] | (1 << (7 - (n % 8)))
     }
@@ -109,7 +109,7 @@ public class BitString {
      */
     func off(n: Int) throws {
         guard checkRange(n: n) else {
-            throw TonError.otherEror("BitString overflow")
+            throw TonError.otherError("BitString overflow")
         }
         array[(n / 8)] |= 1 << (7 - (n % 8))
     }
@@ -121,7 +121,7 @@ public class BitString {
      */
     func toggle(n: Int) throws {
         guard checkRange(n: n) else {
-            throw TonError.otherEror("BitString overflow")
+            throw TonError.otherError("BitString overflow")
         }
         array[(n / 8)] ^= 1 << (7 - (n % 8))
     }
@@ -143,7 +143,7 @@ public class BitString {
     
     public func writeBit(value: Int) throws {
         if writeCursor > array.count * 8 {
-            throw TonError.otherEror("BitBuilder overflow")
+            throw TonError.otherError("BitBuilder overflow")
         }
         
         if value > 0 {
@@ -193,13 +193,13 @@ public class BitString {
      */
     public func writeUInt(number: BigInt, bitLength: Int) throws {
         if number < 0 {
-            throw TonError.otherEror("Unsigned number cannot be less than 0")
+            throw TonError.otherError("Unsigned number cannot be less than 0")
         }
         if (bitLength == 0 || (number.magnitude.bitWidth > bitLength)) {
             if (number == 0) {
                 return
             }
-            throw TonError.otherEror("bitLength is too small for number, got number= \(number), bitLength= \(bitLength)")
+            throw TonError.otherError("bitLength is too small for number, got number= \(number), bitLength= \(bitLength)")
         }
 
         var s = String(number, radix: 2)
@@ -242,7 +242,7 @@ public class BitString {
                 try writeBit(b: false)
                 return
             }
-            throw TonError.otherEror("bitLength is too small for number");
+            throw TonError.otherError("bitLength is too small for number");
         } else {
             if (number.signum() == -1) {
                 try writeBit(b: true);
@@ -290,7 +290,7 @@ public class BitString {
      */
     public func writeCoins(amount: BigInt) throws {
         if (amount.signum() == -1) {
-            throw TonError.otherEror("Coins value must be positive.")
+            throw TonError.otherError("Coins value must be positive.")
         }
 
         if (amount == 0) {
@@ -298,7 +298,7 @@ public class BitString {
         } else {
             let bytesSize = Int(ceil(Double(amount.bitWidth) / Double(8)))
             if (bytesSize >= 16) {
-                throw TonError.otherEror("Amount is too big. Maximum amount 2^120-1");
+                throw TonError.otherError("Amount is too big. Maximum amount 2^120-1");
             }
             try writeUInt(number: BigInt(bytesSize), bitLength: 4)
             try writeUInt(number: BigInt(amount), bitLength: bytesSize * 8)
@@ -397,7 +397,7 @@ public class BitString {
         let oldReadCursor = readCursor
 
         if (bitLength < 1) {
-            throw TonError.otherEror("Incorrect bitLength")
+            throw TonError.otherError("Incorrect bitLength")
         }
         var s = ""
         for _ in 0..<bitLength {
@@ -419,7 +419,7 @@ public class BitString {
      */
     public func readUInt(bitLength: Int) throws -> BigInt {
         if (bitLength < 1) {
-            throw TonError.otherEror("Incorrect bitLength")
+            throw TonError.otherError("Incorrect bitLength")
         }
         var s = ""
         for _ in 0..<bitLength {
@@ -440,7 +440,7 @@ public class BitString {
      */
     public func readInt(bitLength: Int) throws -> BigInt {
         if (bitLength < 1) {
-            throw TonError.otherEror("Incorrect bitLength");
+            throw TonError.otherError("Incorrect bitLength");
         }
 
         let sign = readBit()
@@ -635,7 +635,7 @@ public class BitString {
                 }
             }
             if !foundEndBit {
-                throw TonError.otherEror("Incorrect TopUppedArray")
+                throw TonError.otherError("Incorrect TopUppedArray")
             }
         }
     }

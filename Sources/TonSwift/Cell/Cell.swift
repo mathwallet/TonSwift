@@ -142,7 +142,7 @@ public class Cell {
         var maxLevel: Int = 0
         for ref in refs {
             guard let _ref = ref, let refMaxLevel = try? _ref.getMaxLevel()  else {
-                throw TonError.otherEror("Cell refs error")
+                throw TonError.otherError("Cell refs error")
             }
             if (refMaxLevel > maxLevel) {
                 maxLevel = refMaxLevel
@@ -156,7 +156,7 @@ public class Cell {
         if (!refs.isEmpty) {
             for ref in refs {
                 guard let _ref = ref, let refMaxDepth = try? _ref.getMaxDepth() else {
-                    throw TonError.otherEror("Cell refs error")
+                    throw TonError.otherError("Cell refs error")
                 }
                 if (refMaxDepth > maxDepth) {
                     maxDepth = refMaxDepth
@@ -206,14 +206,14 @@ public class Cell {
         
         for ref in refs {
             guard let _ref = ref else {
-                throw TonError.otherEror("Cell ref error")
+                throw TonError.otherError("Cell ref error")
             }
             reprArray.append(try _ref.getMaxDepthAsArray())
         }
 
         for ref in refs {
             guard let _ref = ref else {
-                throw TonError.otherEror("Cell ref error")
+                throw TonError.otherError("Cell ref error")
             }
             reprArray.append(try _ref.hash())
         }
@@ -234,7 +234,7 @@ public class Cell {
         var s = "\(indent)x{\(try bits.toHex())}\n"
         for ref in refs {
             guard let _ref = ref else {
-                throw TonError.otherEror("Cell ref error")
+                throw TonError.otherError("Cell ref error")
             }
             s = "\(s)\(try _ref.print(indent: "\(indent) "))"
         }
@@ -399,11 +399,11 @@ public class Cell {
         var reprArray = try getDataWithDescriptors()
 
         if (isExplicitlyStoredHashes() != 0) {
-            throw TonError.otherEror("Cell hashes explicit storing is not implemented")
+            throw TonError.otherError("Cell hashes explicit storing is not implemented")
         }
         for cell in refs {
             guard let _cell = cell, let hash = try? _cell.hash() else {
-                throw TonError.otherEror("Cell refs error")
+                throw TonError.otherError("Cell refs error")
             }
             let refIndexInt = BigInt(cellsIndex[hash.toHexString()]!)
             var refIndexHex = String(refIndexInt, radix: 16)
@@ -438,7 +438,7 @@ public class Cell {
         
         for ref in data.cell.refs {
             guard let _ref = ref, let hash = try? _ref.hash() else {
-                throw TonError.otherEror("Cell refs error")
+                throw TonError.otherError("Cell refs error")
             }
             try moveToTheEnd(indexHashmap: indexHashmap, topologicalOrderArray: topologicalOrderArray, target: hash.toHexString())
         }
@@ -477,7 +477,7 @@ public class Cell {
 
         for subCell in cell.refs {
             guard let _subCell = subCell else {
-                throw TonError.otherEror("Cell refs error")
+                throw TonError.otherError("Cell refs error")
             }
             let res = try treeWalk(cell: _subCell, topologicalOrderArray: newTopologicalOrderArray, indexHashmap: newIndexHashmap, parentHash: cellHash)
             newTopologicalOrderArray = res.topologicalOrderArray
@@ -489,7 +489,7 @@ public class Cell {
 
     public static func parseBocHeader(_ serializedBoc: Data) throws -> BocHeader {
         if serializedBoc.count < 5 {
-            throw TonError.otherEror("Not enough bytes for magic prefix")
+            throw TonError.otherError("Not enough bytes for magic prefix")
         }
         let inputData = serializedBoc
         let prefix = serializedBoc[0..<4]
@@ -520,7 +520,7 @@ public class Cell {
         newSerializedBoc = Array<UInt8>(newSerializedBoc[1..<newSerializedBoc.count])
 //        newSerializedBoc[1..<newSerializedBoc.count]
         if newSerializedBoc.count < 1 + 5 * size_bytes {
-            throw TonError.otherEror("Not enough bytes for encoding cells counters")
+            throw TonError.otherError("Not enough bytes for encoding cells counters")
         }
         let offset_bytes = Int(newSerializedBoc[0] & 0xff)
         
@@ -535,14 +535,14 @@ public class Cell {
         let tot_cells_size = Utils.readNBytesFromArray(count: offset_bytes, ui8array: newSerializedBoc)
         
         if tot_cells_size < 0 {
-            throw TonError.otherEror("Cannot calculate total cell size")
+            throw TonError.otherError("Cannot calculate total cell size")
         }
         newSerializedBoc =  Array<UInt8>(newSerializedBoc[offset_bytes..<newSerializedBoc.count])
         
         
         
         if newSerializedBoc.count < roots_num * size_bytes {
-            throw TonError.otherEror("Not enough bytes for encoding root cells hashes")
+            throw TonError.otherError("Not enough bytes for encoding root cells hashes")
         }
         var root_list = [Int]()
         
@@ -554,7 +554,7 @@ public class Cell {
         var index = [Int](repeating: 0, count: cells_num)
         if has_idx != 0 {
             if newSerializedBoc.count < Int(offset_bytes) * cells_num {
-                throw TonError.otherEror("Not enough bytes for index encoding")
+                throw TonError.otherError("Not enough bytes for index encoding")
             }
             for _ in 0 ..< cells_num {
                 index.append(Utils.readNBytesFromArray(count: Int(offset_bytes), ui8array: newSerializedBoc))
@@ -563,25 +563,25 @@ public class Cell {
         }
         
         if newSerializedBoc.count < tot_cells_size {
-            throw TonError.otherEror("Not enough bytes for cells data")
+            throw TonError.otherError("Not enough bytes for cells data")
         }
         let cell_data =  Array<UInt8>(newSerializedBoc[0..<tot_cells_size])
         newSerializedBoc =  Array<UInt8>(newSerializedBoc[tot_cells_size..<newSerializedBoc.count])
         if hash_crc32 != 0 {
             if newSerializedBoc.count < 4 {
-                throw TonError.otherEror("Not enough bytes for crc32c hashsum")
+                throw TonError.otherError("Not enough bytes for crc32c hashsum")
             }
             let bocWithoutCrc = inputData[0..<inputData.count-4]
             let crcInBoc =  Array<UInt8>(newSerializedBoc[0..<4])
             let crc32 = Utils.getCRC32ChecksumAsBytesReversed(data: bocWithoutCrc)
             if !Utils.compareBytes(a: crc32.bytes, b: crcInBoc) {
-                throw TonError.otherEror("Crc32c hashsum mismatch")
+                throw TonError.otherError("Crc32c hashsum mismatch")
             }
             newSerializedBoc =  Array<UInt8>(newSerializedBoc[4..<newSerializedBoc.count])
         }
         
         if newSerializedBoc.count != 0  {
-            throw TonError.otherEror("Too much bytes in BoC serialization")
+            throw TonError.otherError("Too much bytes in BoC serialization")
         }
         let bocHeader = BocHeader(has_idx: has_idx,
                                   hash_crc32: hash_crc32,
@@ -603,7 +603,7 @@ public class Cell {
 
     static func deserializeCellData(cellData: Data, referenceIndexSize: Int) throws -> DeserializeCellDataResult {
         if (cellData.count < 2) {
-            throw TonError.otherEror("Not enough bytes to encode cell descriptors");
+            throw TonError.otherError("Not enough bytes to encode cell descriptors");
         }
         let d1 = Int(cellData.bytes[0] & 0xff)
         let d2 = Int(cellData.bytes[1] & 0xff)
@@ -616,7 +616,7 @@ public class Cell {
         let cell = Cell()
         cell.isExotic = isExotic;
         if (newCellData.count < dataBytesize + referenceIndexSize * refNum) {
-            throw TonError.otherEror("Not enough bytes to encode cell data")
+            throw TonError.otherError("Not enough bytes to encode cell data")
         }
         try cell.bits.setTopUppedArray(arr: Data(newCellData[0..<dataBytesize]), fulfilledBytes: fullfilledBytes)
         
@@ -660,7 +660,7 @@ public class Cell {
             for ri in 0..<c.refsInt.count {
                 let r = c.refsInt[ri]
                 if (r < ci) {
-                    throw TonError.otherEror("Topological order is broken")
+                    throw TonError.otherError("Topological order is broken")
                 }
                 c.refs[ri] = cellsArray[Int(r)]
             }

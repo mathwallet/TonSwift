@@ -10,7 +10,7 @@ import Foundation
 public enum TonError: LocalizedError {
     case providerError(String)
     case keyError(String)
-    case otherEror(String)
+    case otherError(String)
     case resoultError(String, String)
     case unknow
     
@@ -20,7 +20,7 @@ public enum TonError: LocalizedError {
             return message
         case .keyError(let message):
             return message
-        case .otherEror(let message):
+        case .otherError(let message):
             return message
         case .resoultError(_, let message):
             return message

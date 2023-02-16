@@ -24,7 +24,7 @@ public class Contract {
      */
     public func createCodeCell() throws -> Cell {
         guard let code = getOptions()?.code else {
-            throw TonError.otherEror("Contract: options.code is not defined")
+            throw TonError.otherError("Contract: options.code is not defined")
         }
         return code
     }
@@ -74,16 +74,16 @@ public class Contract {
     public func createStateInit(code: Cell?, data: Cell?, library: Cell?, splitDepth: Cell?, ticktock: Cell?) throws -> Cell {
         
         if library != nil {
-            throw TonError.otherEror("Library in state init is not implemented")
+            throw TonError.otherError("Library in state init is not implemented")
             
         }
         
         if splitDepth != nil {
-            throw TonError.otherEror("Split depth in state init is not implemented")
+            throw TonError.otherError("Split depth in state init is not implemented")
         }
         
         if ticktock != nil  {
-            throw TonError.otherEror("Ticktock in state init is not implemented")
+            throw TonError.otherError("Ticktock in state init is not implemented")
         }
 
         let stateInit = CellBuilder.beginCell()
@@ -165,7 +165,7 @@ public class Contract {
         let _  = try message.storeAddress(address: dest)
         let _  = try message.storeCoins(coins: gramValue)
         guard let _currencyCollection = currencyCollection, _currencyCollection.count == 0 else {
-            throw TonError.otherEror("Currency collections are not implemented yet")
+            throw TonError.otherError("Currency collections are not implemented yet")
         }
         let _  = try message.storeBit(bit: _currencyCollection.count != 0)
         let _  = try message.storeCoins(coins: ihrFees)

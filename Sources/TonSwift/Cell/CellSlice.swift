@@ -38,7 +38,7 @@ public class CellSlice {
 
     public func endParse() throws {
         if (bits.readCursor != bits.getUsedBits()) {
-            throw TonError.otherEror("readCursor: \(bits.readCursor) != bits.length: \(bits.getUsedBits())")
+            throw TonError.otherError("readCursor: \(bits.readCursor) != bits.length: \(bits.getUsedBits())")
         }
     }
 
@@ -297,7 +297,7 @@ public class CellSlice {
         try checkBitsOverflow(length: length)
         let bitString = try bits.readBits(n: length)
         guard let string = String(data: bitString.toByteArray(), encoding: .utf8) else {
-            throw TonError.otherEror("bits error")
+            throw TonError.otherError("bits error")
         }
         return string
     }
@@ -329,7 +329,7 @@ public class CellSlice {
         }
         let i = try loadBits(length: length)
         guard let int = BigInt(i.toBitString(), radix: 2) else {
-            throw TonError.otherEror("length loadUint error")
+            throw TonError.otherError("length loadUint error")
         }
         return int
     }
@@ -361,7 +361,7 @@ public class CellSlice {
     public func loadUintLEQ(n: BigInt) throws -> BigInt {
         let result = try loadUint(length: n.bitWidth)
         if (result > n) {
-            throw TonError.otherEror("Cannot load {<= x}: encoded number is too high");
+            throw TonError.otherError("Cannot load {<= x}: encoded number is too high");
         }
         return result
     }
@@ -417,13 +417,13 @@ public class CellSlice {
 
     func checkBitsOverflow(length: Int) throws {
         if (bits.readCursor + length > bits.writeCursor) {
-            throw TonError.otherEror("Bits overflow. Can't load \(length)  bits. \(bits.getFreeBits())  bits left.")
+            throw TonError.otherError("Bits overflow. Can't load \(length)  bits. \(bits.getFreeBits())  bits left.")
         }
     }
 
     func checkRefsOverflow() throws {
         if (refs.isEmpty) {
-            throw TonError.otherEror("Refs overflow.")
+            throw TonError.otherError("Refs overflow.")
         }
     }
 

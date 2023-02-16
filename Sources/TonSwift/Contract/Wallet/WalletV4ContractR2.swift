@@ -81,25 +81,6 @@ public class WalletV4ContractR2: WalletContract {
         return message.endCell
     }
     
-    //    /**
-    //     * Deploy and install/assigns subscription plugin.
-    //     * One can also deploy plugin separately and later install into the wallet. See installPlugin().
-    //     *
-    //     * @param params NewPlugin
-    //     */
-    //    public func deployAndInstallPlugin(tonlib:Tonlib, NewPlugin params) {
-    //
-    //        Cell signingMessage = createSigningMessage(params.seqno, true)
-    //        signingMessage.bits.writeUint(BigInt.ONE, 8) // op
-    //        signingMessage.bits.writeInt(BigInt(params.pluginWc), 8)
-    //        signingMessage.bits.writeCoins(params.amount) // plugin balance
-    //        signingMessage.refs.add(params.stateInit)
-    //        signingMessage.refs.add(params.body)
-    //        ExternalMessage extMsg = createExternalMessage(signingMessage, params.secretKey, params.seqno, false)
-    //
-    //        tonlib.sendRawMessage(extMsg.message.toBocBase64(false))
-    //    }
-    
     public func createPluginStateInit() throws -> Cell {
         // code = boc in hex format, result of fift commands:
         //      "subscription-plugin-code.fif" include
@@ -108,7 +89,7 @@ public class WalletV4ContractR2: WalletContract {
         let code = try TonSwift.Cell.fromBoc(serializedBoc: "B5EE9C7241020F01000262000114FF00F4A413F4BCF2C80B0102012002030201480405036AF230DB3C5335A127A904F82327A128A90401BC5135A0F823B913B0F29EF800725210BE945387F0078E855386DB3CA4E2F82302DB3C0B0C0D0202CD06070121A0D0C9B67813F488DE0411F488DE0410130B048FD6D9E05E8698198FD201829846382C74E2F841999E98F9841083239BA395D497803F018B841083AB735BBED9E702984E382D9C74688462F863841083AB735BBED9E70156BA4E09040B0A0A080269F10FD22184093886D9E7C12C1083239BA39384008646582A803678B2801FD010A65B5658F89659FE4B9FD803FC1083239BA396D9E40E0A04F08E8D108C5F0C708210756E6B77DB3CE00AD31F308210706C7567831EB15210BA8F48305324A126A904F82326A127A904BEF27109FA4430A619F833D078D721D70B3F5260A11BBE8E923036F82370708210737562732759DB3C5077DE106910581047103645135042DB3CE0395F076C2232821064737472BA0A0A0D09011A8E897F821064737472DB3CE0300A006821B39982100400000072FB02DE70F8276F118010C8CB055005CF1621FA0214F40013CB6912CB1F830602948100A032DEC901FB000030ED44D0FA40FA40FA00D31FD31FD31FD31FD31FD307D31F30018021FA443020813A98DB3C01A619F833D078D721D70B3FA070F8258210706C7567228018C8CB055007CF165004FA0215CB6A12CB1F13CB3F01FA02CB00C973FB000E0040C8500ACF165008CF165006FA0214CB1F12CB1FCB1FCB1FCB1FCB07CB1FC9ED54005801A615F833D020D70B078100D1BA95810088D721DED307218100DDBA028100DEBA12B1F2E047D33F30A8AB0FE5855AB4")
         let wallet = try getAddress()
         guard let _options = options, let subscriptionConfig = _options.subscriptionConfig else {
-            throw TonError.otherEror("contract options nil")
+            throw TonError.otherError("contract options nil")
         }
         let data = try createPluginDataCell(wallet: wallet,
                                             beneficiary: subscriptionConfig.beneficiary,
@@ -172,80 +153,6 @@ public class WalletV4ContractR2: WalletContract {
         return try setPlugin(params: params, isInstall: false)
     }
     
-    
-    //    /**
-    //     * @return subwallet-id Int64
-    //     */
-    //    public func getWalletId(Tonlib tonlib) -> Int64 {
-    //
-    //        Address myAddress = getAddress()
-    //        RunResult result = tonlib.runMethod(myAddress, "get_subwallet_id")
-    //        TvmStackEntryNumber subWalletId = (TvmStackEntryNumber) result.getStack().get(0)
-    //
-    //        return subWalletId.getNumber().Int64Value()
-    //    }
-    //
-    //        public Data getPublicKey(Tonlib tonlib) {
-    //            Address myAddress = getAddress()
-    //            RunResult result = tonlib.runMethod(myAddress, "get_public_key")
-    //            TvmStackEntryNumber pubKey = (TvmStackEntryNumber) result.getStack().get(0)
-    //
-    //            return pubKey.getNumber().toByteArray()
-    //        }
-    
-    /**
-     * @param pluginAddress Address
-     * @return Bool
-     */
-    //        public Bool isPluginInstalled(Tonlib tonlib, Address pluginAddress) {
-    //            String hashPart = new BigInt(pluginAddress.hashPart).toString()
-    //
-    //            Address myAddress = getAddress()
-    //
-    //            Deque<String> stack = new ArrayDeque<>()
-    //            stack.offer("[num, " + pluginAddress.wc + "]")
-    //            stack.offer("[num, " + hashPart + "]")
-    //
-    //            RunResult result = tonlib.runMethod(myAddress, "is_plugin_installed", stack)
-    //            TvmStackEntryNumber resultNumber = (TvmStackEntryNumber) result.getStack().get(0)
-    //
-    //            return resultNumber.getNumber().Int64Value() != 0
-    //        }
-    //
-    //        /**
-    //         * @return List<String> plugins addresses
-    //         */
-    //        public List<String> getPluginsList(Tonlib tonlib) {
-    //            List<String> r = new ArrayList<>()
-    //            Address myAddress = getAddress()
-    //            RunResult result = tonlib.runMethod(myAddress, "get_plugin_list")
-    //            TvmStackEntryList list = (TvmStackEntryList) result.getStack().get(0)
-    //            for (Object o : list.getList().getElements()) {
-    //                TvmStackEntryTuple t = (TvmStackEntryTuple) o
-    //                TvmTuple tuple = t.getTuple()
-    //                TvmStackEntryNumber wc = (TvmStackEntryNumber) tuple.getElements().get(0) // 1 byte
-    //                TvmStackEntryNumber addr = (TvmStackEntryNumber) tuple.getElements().get(1) // 32 bytes
-    //                r.add(wc.getNumber() + ":" + addr.getNumber().toString(16).toUpperCase())
-    //            }
-    //            return r
-    //        }
-    //
-    //        /**
-    //         * Get subscription data of the specified plugin
-    //         *
-    //         * @return TvmStackEntryList
-    //         */
-    //        public SubscriptionInfo getSubscriptionData(Tonlib tonlib, Address pluginAddress) {
-    //
-    //            RunResult result = tonlib.runMethod(pluginAddress, "get_subscription_data")
-    //            if (result.getExit_code() == 0) {
-    //                return parseSubscriptionData(result.getStack())
-    //            } else {
-    //                throw new Error("Error executing get_subscription_data. Exit code " + result.getExit_code())
-    //
-    //            }
-    //        }
-    
     public func createPluginDataCell(wallet: Address,
                                      beneficiary: Address,
                                      amount: BigInt,
@@ -270,41 +177,4 @@ public class WalletV4ContractR2: WalletContract {
         let _ = try cell.storeUint(number: BigInt(subscriptionId), bitLength: 32)
         return cell.endCell
     }
-    
-    //        private SubscriptionInfo parseSubscriptionData(List subscriptionData) {
-    //            TvmStackEntryTuple walletAddr = (TvmStackEntryTuple) subscriptionData.get(0)
-    //            TvmStackEntryNumber wc = (TvmStackEntryNumber) walletAddr.getTuple().getElements().get(0)
-    //            TvmStackEntryNumber hash = (TvmStackEntryNumber) walletAddr.getTuple().getElements().get(1)
-    //            TvmStackEntryTuple beneficiaryAddr = (TvmStackEntryTuple) subscriptionData.get(1)
-    //            TvmStackEntryNumber beneficiaryAddrWc = (TvmStackEntryNumber) beneficiaryAddr.getTuple().getElements().get(0)
-    //            TvmStackEntryNumber beneficiaryAddrHash = (TvmStackEntryNumber) beneficiaryAddr.getTuple().getElements().get(1)
-    //            TvmStackEntryNumber amount = (TvmStackEntryNumber) subscriptionData.get(2)
-    //            TvmStackEntryNumber period = (TvmStackEntryNumber) subscriptionData.get(3)
-    //            TvmStackEntryNumber startTime = (TvmStackEntryNumber) subscriptionData.get(4)
-    //            TvmStackEntryNumber timeOut = (TvmStackEntryNumber) subscriptionData.get(5)
-    //            TvmStackEntryNumber lastPaymentTime = (TvmStackEntryNumber) subscriptionData.get(6)
-    //            TvmStackEntryNumber lastRequestTime = (TvmStackEntryNumber) subscriptionData.get(7)
-    //
-    //            Int64 now = System.currentTimeMillis() / 1000
-    //            Bool isPaid = ((now - lastPaymentTime.getNumber().Int64Value()) < period.getNumber().Int64Value())
-    //            Bool paymentReady = !isPaid & ((now - lastRequestTime.getNumber().Int64Value()) > timeOut.getNumber().Int64Value())
-    //
-    //            TvmStackEntryNumber failedAttempts = (TvmStackEntryNumber) subscriptionData.get(8)
-    //            TvmStackEntryNumber subscriptionId = (TvmStackEntryNumber) subscriptionData.get(9)
-    //
-    //            return SubscriptionInfo.builder()
-    //                    .walletAddress(Address.of(wc.getNumber() + ":" + hash.getNumber().toString(16)))
-    //                    .beneficiary(Address.of(beneficiaryAddrWc.getNumber() + ":" + beneficiaryAddrHash.getNumber().toString(16)))
-    //                    .subscriptionFee(amount.getNumber())
-    //                    .period(period.getNumber().Int64Value())
-    //                    .startTime(startTime.getNumber().Int64Value())
-    //                    .timeOut(timeOut.getNumber().Int64Value())
-    //                    .lastPaymentTime(lastPaymentTime.getNumber().Int64Value())
-    //                    .lastRequestTime(lastRequestTime.getNumber().Int64Value())
-    //                    .isPaid(isPaid)
-    //                    .isPaymentReady(paymentReady)
-    //                    .failedAttempts(failedAttempts.getNumber().Int64Value())
-    //                    .subscriptionId(subscriptionId.getNumber().Int64Value())
-    //                    .build()
-    //        }
 }

@@ -192,7 +192,7 @@ public class WalletContract : Contract {
                                             amount: BigInt,
                                             seqno: Int64) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.otherEror("address error")
+            throw TonError.otherError("address error")
         }
         return try createSignedTransferMessagePayloadCell(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: nil, sendMode: UInt8(3), dummySignature: false, stateInit: nil)
     }
@@ -217,7 +217,7 @@ public class WalletContract : Contract {
                                                  dummySignature: Bool = false,
                                                  stateInit: Cell? = nil) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.otherEror("address error")
+            throw TonError.otherError("address error")
         }
         return try createSignedTransferMessagePayloadCell(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: payload, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }
@@ -267,7 +267,7 @@ public class WalletContract : Contract {
                                                  dummySignature: Bool = false,
                                                  stateInit: Cell? = nil) throws ->ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.otherEror("address error")
+            throw TonError.otherError("address error")
         }
         return try createSignedTransferMessagePayloadData(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: payload, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }
@@ -323,7 +323,7 @@ public class WalletContract : Contract {
                                                    dummySignature: Bool = false,
                                                    stateInit: Cell? = nil) throws -> ExternalMessage {
         guard let addr = try? Address.of(addressStr: address) else {
-            throw TonError.otherEror("address error")
+            throw TonError.otherError("address error")
         }
         return try createSignedTransferMessagePayloadString(secretKey: secretKey, address: addr, amount: amount, seqno: seqno, payload: payload, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }

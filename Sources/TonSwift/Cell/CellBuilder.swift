@@ -53,7 +53,7 @@ public class CellBuilder: Cell {
 //        return self
 //    }
 
-    public func storeUint(number: UInt64, bitLength: Int) throws -> CellBuilder {
+    public func storeUint(number: Int64, bitLength: Int) throws -> CellBuilder {
         return try storeUint(number: BigInt(number), bitLength: bitLength)
     }
 
@@ -77,7 +77,7 @@ public class CellBuilder: Cell {
         return self
     }
 
-    public func storeInt(number: UInt64, bitLength: Int) throws -> CellBuilder {
+    public func storeInt(number: Int64, bitLength: Int) throws -> CellBuilder {
         return try storeInt(number: BigInt(number), bitLength: bitLength)
     }
 
@@ -97,13 +97,13 @@ public class CellBuilder: Cell {
             try! bits.writeInt(number: number, bitLength: bitLength)
             return self
         } else {
-            throw TonError.otherEror("Can't store an Int, because its value allocates more space than provided.")
+            throw TonError.otherError("Can't store an Int, because its value allocates more space than provided.")
         }
 //        if ((number.compareTo(sint.negate()) >= 0) && (number.compareTo(sint) < 0)) {
 //            bits.writeInt(number, bitLength);
 //            return this;
 //        } else {
-//            throw TonError.otherEror("Can't store an Int, because its value allocates more space than provided.");
+//            throw TonError.otherError("Can't store an Int, because its value allocates more space than provided.");
 //        }
     }
 
@@ -201,19 +201,19 @@ public class CellBuilder: Cell {
 
     func checkBitsOverflow(length: Int) throws {
         if (length > bits.getFreeBits()) {
-            throw TonError.otherEror("Bits overflow. Can't add \(length) bits. \(bits.getFreeBits()) bits left.")
+            throw TonError.otherError("Bits overflow. Can't add \(length) bits. \(bits.getFreeBits()) bits left.")
         }
     }
 
     func checkSign(i: BigInt) throws {
         if (i.signum() < 0) {
-            throw TonError.otherEror("Integer \(i) must be unsigned")
+            throw TonError.otherError("Integer \(i) must be unsigned")
         }
     }
 
     func checkRefsOverflow(count: Int) throws {
         if (count > (4 - refs.count)) {
-            throw TonError.otherEror("Refs overflow. Can't add \(count) refs. \(4 - refs.count) refs left.")
+            throw TonError.otherError("Refs overflow. Can't add \(count) refs. \(4 - refs.count) refs left.")
         }
     }
 }

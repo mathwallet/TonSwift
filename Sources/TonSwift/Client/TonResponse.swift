@@ -7,6 +7,7 @@
 
 import Foundation
 import BigInt
+import AnyCodable
 
 public struct TonRPCResult<T: Codable>: Codable {
     public let ok: Bool
@@ -62,17 +63,37 @@ public struct WalletInfoResult: Codable {
     public let seqno: Int64
 }
 
-public struct TonSeqnoResult: Codable {
+public struct RunGetRunMethodResult: Codable {
     public let type: String
     public let gasUsed: Int
-    public let stack: [[String]]
+    public let stack: [[AnyCodable]]
     public let exitCode: Int
     public let extra: String
     
-    public var seqno: Int64 {
-        let stacks = stack[0]
-        let seqnoStr = stacks[1].replacingOccurrences(of: "0x", with: "")
-        return Int64(seqnoStr, radix: 16) ?? Int64(0)
+    public var seqno: Int64? {
+        for i in 0..<stack.count {
+            if stack[i][0].description == "num" {
+                let value = stack[0][1].description
+                let seqnoStr = value.replacingOccurrences(of: "0x", with: "")
+                return Int64(seqnoStr, radix: 16) ?? Int64(0)
+            }
+        }
+        return nil
+    }
+    
+    public var cell: Cell? {
+        for i in 0..<stack.count {
+            if stack[i][0].description == "cell" {
+                let data = stack[i][1]
+                guard let dic = data.value as? [String: Any],
+                      let bytes = dic["bytes"] as? String,
+                      let cell = try? Cell.deserializeBoc(serializedBoc: Data([UInt8](base64: bytes))) else {
+                    return nil
+                }
+                return cell
+            }
+        }
+        return nil
     }
     
     enum CodingKeys: String, CodingKey {

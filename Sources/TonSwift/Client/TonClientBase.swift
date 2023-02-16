@@ -29,7 +29,7 @@ public class TonClientBase {
         return POST(path: "/api/v2/jsonRPC", parameters: parameters, headers: ["X-API-Key" : self.apiKey])
     }
     
-    public func runGetMethod<T: Codable>(address: String, method: String, params: [String: Any] = [String: Any]()) -> Promise<T> {
+    public func runGetMethod<T: Codable>(address: String, method: String, params: [Any] = [Any]()) -> Promise<T> {
         let parameters = [
             "address": address,
             "method": method,
@@ -81,7 +81,7 @@ public class TonClientBase {
             do {
                 let result = try decoder.decode(TonRPCResult<T>.self, from: data)
                 guard result.ok == true else {
-                    throw TonError.otherEror(result.error!)
+                    throw TonError.otherError(result.error!)
                 }
                 guard let data = result.result else {
                     throw TonError.unknow
@@ -144,7 +144,7 @@ public class TonClientBase {
                 let result = try decoder.decode(TonRPCResult<T>.self, from: data)
                 guard result.ok == true else {
                     if let errorStr = result.error {
-                        throw TonError.otherEror(errorStr)
+                        throw TonError.otherError(errorStr)
                     }
                     throw TonError.unknow
                 }
