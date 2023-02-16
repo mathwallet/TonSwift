@@ -81,9 +81,9 @@ extension TonClient {
         return runGetMethod(address: address, method: "get_wallet_data")
     }
     
-    public func getJettonWalletBalance(address: String) -> Promise<String> {
+    public func getJettonWalletBalance(jettonAddress: String) -> Promise<String> {
         return Promise{ seal in
-            getJettonWalletData(address: address).done { (result: RunGetRunMethodResult) in
+            getJettonWalletData(address: jettonAddress).done { (result: RunGetRunMethodResult) in
                 if let num = result.num {
                     seal.fulfill(String(num))
                 } else {
