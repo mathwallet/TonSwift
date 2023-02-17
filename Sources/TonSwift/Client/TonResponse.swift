@@ -81,19 +81,19 @@ public struct RunGetRunMethodResult: Codable {
         return nil
     }
     
-    public var cell: Cell? {
+    public var cells: [Cell] {
+        var cellArray = [Cell]()
         for i in 0..<stack.count {
             if stack[i][0].description == "cell" {
                 let data = stack[i][1]
-                guard let dic = data.value as? [String: Any],
+                if let dic = data.value as? [String: Any],
                       let bytes = dic["bytes"] as? String,
-                      let cell = try? Cell.deserializeBoc(serializedBoc: Data([UInt8](base64: bytes))) else {
-                    return nil
+                   let cell = try? Cell.deserializeBoc(serializedBoc: Data([UInt8](base64: bytes))){
+                    cellArray.append(cell)
                 }
-                return cell
             }
         }
-        return nil
+        return cellArray
     }
     
     enum CodingKeys: String, CodingKey {
