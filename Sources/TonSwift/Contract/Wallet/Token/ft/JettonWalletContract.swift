@@ -48,11 +48,12 @@ public class JettonWalletContract : Contract {
     
     /** * @return Cell cell contains nft data */
     public static func createTransferBody(queryId: Int64,
-                                   jettonAmount: BigInt,
-                                   toAddress: Address,
-                                   responseAddress: Address,
-                                   forwardAmount: BigInt,
-                                   forwardPayload: Data) throws -> Cell {
+                                          jettonAmount: BigInt,
+                                          toAddress: Address,
+                                          responseAddress: Address,
+                                          forwardAmount: BigInt,
+                                          message: String,
+                                          forwardPayload: Data) throws -> Cell {
         let cell = CellBuilder.beginCell()
         let _ = try cell.storeUint(number: 0xf8a7ea5, bitLength: 32)
         let _ = try cell.storeUint(number: queryId, bitLength: 64)
@@ -64,6 +65,10 @@ public class JettonWalletContract : Contract {
         let _ = try cell.storeBit(bit: false)
         if (forwardPayload.count != 0) {
             let _ =  try cell.bits.writeBytes(ui8s: forwardPayload.bytes)
+        }
+        if message.count > 0 {
+            let _ = try cell.storeUint(number: BigInt.zero, bitLength: 32)
+            let _ = try cell.storeString(str: message)
         }
         return cell.endCell
     }
