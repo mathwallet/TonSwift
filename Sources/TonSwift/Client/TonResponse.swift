@@ -104,3 +104,15 @@ public struct RunGetRunMethodResult: Codable {
         case extra = "@extra"
     }
 }
+
+public struct SendBocReturnHashResult: Codable {
+    public let type: String
+    public let hash: String
+    public let extra: String
+    
+    enum CodingKeys: String, CodingKey {
+        case type = "@type"
+        case hash
+        case extra = "@extra"
+    }
+}

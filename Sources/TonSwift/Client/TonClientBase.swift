@@ -19,7 +19,7 @@ public class TonClientBase {
         self.apiKey = apiKey
     }
     
-    public func send<T: Codable>(method: String, params: [String: Any]? = nil) -> Promise<T> {
+    public func sendRPC<T: Codable>(method: String, params: [String: Any]? = nil) -> Promise<T> {
         let parameters = [
             "id": 1,
             "jsonrpc": "2.0",
@@ -35,7 +35,7 @@ public class TonClientBase {
             "method": method,
             "stack": params
         ] as [String : Any]
-        return send(method: "runGetMethod", params: parameters)
+        return sendRPC(method: "runGetMethod", params: parameters)
     }
     
     public func GET<T: Codable>(path: String, parameters: [String: Any]? = nil) -> Promise<T> {

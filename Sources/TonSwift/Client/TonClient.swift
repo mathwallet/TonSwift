@@ -11,15 +11,15 @@ import PromiseKit
 public class TonClient: TonClientBase {
     
     public func getChainInfo() -> Promise<ChainInfoResult> {
-        return send(method: "getMasterchainInfo")
+        return sendRPC(method: "getMasterchainInfo")
     }
     
     public func getAddressInfo(address: String) -> Promise<AddressInfoResult> {
-        return send(method: "getAddressInformation", params: ["address": address])
+        return sendRPC(method: "getAddressInformation", params: ["address": address])
     }
     
     public func getWalletInfo(address: String) -> Promise<WalletInfoResult> {
-        return send(method: "getWalletInformation", params: ["address": address])
+        return sendRPC(method: "getWalletInformation", params: ["address": address])
     }
     
     public func getSeqno(address: String) -> Promise<Int64> {
@@ -33,7 +33,7 @@ public class TonClient: TonClientBase {
     }
     
     public func getAddressBalance(address: String) -> Promise<String> {
-        return send(method: "getAddressBalance", params: ["address": address])
+        return sendRPC(method: "getAddressBalance", params: ["address": address])
     }
     
     public func getEstimateFee(externalMessage: ExternalMessage) -> Promise<String> {
@@ -49,12 +49,12 @@ public class TonClient: TonClientBase {
                 "ignore_chksig": true
             ]
         }
-        return send(method: "estimateFee", params: params)
+        return sendRPC(method: "estimateFee", params: params)
     }
     
     
-    public func sendBoc(base64: String) -> Promise<String> {
-        return send(method: "sendBoc", params: ["boc": base64])
+    public func sendBoc(base64: String) -> Promise<SendBocReturnHashResult> {
+        return sendRPC(method: "sendBocReturnHash", params: ["boc": base64])
     }
     
 }
