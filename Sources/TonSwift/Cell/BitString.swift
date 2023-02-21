@@ -9,7 +9,7 @@ import Foundation
 import BigInt
 
 public class BitString {
-    var array: Data
+    public var array: Data
     public var writeCursor: Int
     public var readCursor: Int
     public var length: Int
