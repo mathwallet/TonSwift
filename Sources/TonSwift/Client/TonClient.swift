@@ -53,8 +53,14 @@ public class TonClient: TonClientBase {
     }
     
     
-    public func sendBoc(base64: String) -> Promise<SendBocReturnHashResult> {
-        return sendRPC(method: "sendBocReturnHash", params: ["boc": base64])
+    public func sendBoc(base64: String) -> Promise<String> {
+        return Promise<String> {seal in
+            sendRPC(method: "sendBocReturnHash", params: ["boc": base64]).done { (result: SendBocReturnHashResult) in
+                seal.fulfill(result.hash)
+            }.catch { error in
+                seal.reject(error)
+            }
+        }
     }
     
 }
