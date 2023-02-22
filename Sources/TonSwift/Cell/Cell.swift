@@ -408,7 +408,7 @@ public class Cell {
             let refIndexInt = BigInt(cellsIndex[hash.toHexString()]!)
             var refIndexHex = String(refIndexInt, radix: 16)
             if (refIndexHex.count % 2 != 0) {
-                refIndexHex = "0\(refIndexInt)"
+                refIndexHex = "0\(refIndexHex)"
             }
             let reference = Data(hex: refIndexHex)
             reprArray.append(reference)
@@ -619,7 +619,6 @@ public class Cell {
             throw TonError.otherError("Not enough bytes to encode cell data")
         }
         try cell.bits.setTopUppedArray(arr: Data(newCellData[0..<dataBytesize]), fulfilledBytes: fullfilledBytes)
-        
         newCellData = Array<UInt8>(newCellData[dataBytesize..<newCellData.count])
         
         for _ in 0..<refNum {
