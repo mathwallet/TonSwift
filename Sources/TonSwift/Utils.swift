@@ -14,7 +14,7 @@ public struct Utils {
     public init() {}
     
     public static func readNBytesFromArray(count: Int, ui8array: [UInt8]) -> Int {
-        var res:Int = 0;
+        var res: Int = 0
         for i in 0 ..< count {
             res *= 256
             res += Int(ui8array[i] & 0xff)

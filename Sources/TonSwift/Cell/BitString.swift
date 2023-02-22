@@ -99,7 +99,7 @@ public class BitString {
         guard checkRange(n: n) else {
             throw TonError.otherError("BitString overflow")
         }
-        array[(n / 8)] = array[(n / 8)] | (1 << (7 - (n % 8)))
+        array[(n / 8)] |= 1 << (7 - (n % 8))
     }
 
     /**
@@ -111,7 +111,7 @@ public class BitString {
         guard checkRange(n: n) else {
             throw TonError.otherError("BitString overflow")
         }
-        array[(n / 8)] |= 1 << (7 - (n % 8))
+        array[(n / 8)] &= ~(1 << (7 - (n % 8)))
     }
 
     /**

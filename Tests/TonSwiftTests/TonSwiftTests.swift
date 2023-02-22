@@ -10,11 +10,11 @@ final class TonSwiftTests: XCTestCase {
     }
     
     func testKeypairExample() throws {
-        let keypair = try TonKeypair.randomKeyPair()
+        let keypair = try TonKeypair(seed: Data(hex: "d2a351c1dcb250fd5380eb4ce3e1d2594c575398fa8d0dadc3987346d5ba453e"))
         let contract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey, wc: Int64(0))).create()
-        print(keypair.mnemonics!)
         print(keypair.publicKey.toHexString())
         print(keypair.secretKey.toHexString())
+        print(try! contract.createStateInit().stateInit.toBocBase64())
         print(try! contract.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: true))
     }
     
