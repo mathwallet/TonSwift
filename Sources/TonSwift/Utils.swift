@@ -97,3 +97,17 @@ public struct Utils {
          return signature
      }
 }
+
+public extension Data {
+    mutating func writeInt32LE(_ value: Int32) {
+        self.append(contentsOf: Swift.withUnsafeBytes(of: value.littleEndian) { Array($0)})
+    }
+    
+    mutating func writeInt32BE(_ value: Int32) {
+        self.append(contentsOf: Swift.withUnsafeBytes(of: value.bigEndian) { Array($0)})
+    }
+    
+    mutating func writeInt64LE(_ value: Int64) {
+        self.append(contentsOf: Swift.withUnsafeBytes(of: value.littleEndian) { Array($0)})
+    }
+}
