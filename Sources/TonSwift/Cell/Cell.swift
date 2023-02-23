@@ -479,7 +479,6 @@ public class Cell {
             guard let _subCell = subCell else {
                 throw TonError.otherError("Cell refs error")
             }
-            Swift.print(_subCell.bits.array.toHexString())
             let res = try treeWalk(cell: _subCell, topologicalOrderArray: newTopologicalOrderArray, indexHashmap: newIndexHashmap, parentHash: cellHash)
             newTopologicalOrderArray = res.topologicalOrderArray
             newIndexHashmap = res.indexHashmap

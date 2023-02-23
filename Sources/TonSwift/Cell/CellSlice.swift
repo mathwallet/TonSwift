@@ -359,7 +359,7 @@ public class CellSlice {
     }
 
     public func loadUintLEQ(n: BigInt) throws -> BigInt {
-        let result = try loadUint(length: n.bitWidth)
+        let result = try loadUint(length: n.magnitude.bitWidth)
         if (result > n) {
             throw TonError.otherError("Cannot load {<= x}: encoded number is too high");
         }
