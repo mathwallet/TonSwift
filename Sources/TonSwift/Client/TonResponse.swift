@@ -105,6 +105,26 @@ public struct RunGetRunMethodResult: Codable {
     }
 }
 
+public struct EstimateFeeResult: Codable {
+    public let type: String
+    public let extra: String
+    let sourceFees: SourceFees
+    
+    public var gasFee: Int64 {
+        return sourceFees.gasFee
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case type = "@type"
+        case sourceFees
+        case extra = "@extra"
+    }
+    
+    struct SourceFees: Codable {
+        public let gasFee: Int64
+    }
+}
+
 public struct SendBocReturnHashResult: Codable {
     public let type: String
     public let hash: String

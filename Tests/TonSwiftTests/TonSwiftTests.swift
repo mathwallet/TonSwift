@@ -43,7 +43,7 @@ final class TonSwiftTests: XCTestCase {
                 let keypair = try TonKeypair(seed: Data(hex: "d2a351c1dcb250fd5380eb4ce3e1d2594c575398fa8d0dadc3987346d5ba453e"))
                 let contract: WalletContract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey)).create() as! WalletContract
                 let externalMessage = try contract.createSignedTransferMessagePayloadString(secretKey: Data(count: 64), address: "EQCBlo5osdqQWEc4YRVaMB7DcP5PVm1qKknAmkttUIclyhgS", amount: BigInt("1000000"), seqno: 9, payload: "123")
-                let result = client.getEstimateFee(externalMessage: externalMessage)
+                let result = try client.getEstimateFee(from: try contract.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: true), externalMessage: externalMessage).wait()
                 debugPrint(result)
             } catch let error {
                 debugPrint(error)

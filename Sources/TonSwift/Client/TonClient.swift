@@ -36,20 +36,29 @@ public class TonClient: TonClientBase {
         return sendRPC(method: "getAddressBalance", params: ["address": address])
     }
     
-    public func getEstimateFee(externalMessage: ExternalMessage) -> Promise<String> {
-        var params = [String: Any]()
-        if let body = try? externalMessage.body.toBoc(hasIdx: false).toHexString(),
-           let init_code = try? externalMessage.code?.toBoc(hasIdx: false).toHexString(),
-           let init_data = try? externalMessage.data?.toBoc(hasIdx: false).toHexString() {
-            params = [
-                "address": externalMessage.address.toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false),
-                "body": body,
-                "init_code": init_code,
-                "init_data": init_data,
-                "ignore_chksig": true
-            ]
+    public func getEstimateFee(from: String, externalMessage: ExternalMessage) -> Promise<Int64> {
+        return Promise<Int64> {seal in
+            var params = [String: Any]()
+            do {
+                let fromAddress = Address(addressStr: from)?.toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false)
+                let body = try externalMessage.body.toBocBase64(hasIdx: false)
+                let init_code = try externalMessage.code?.toBocBase64(hasIdx: false)
+                let init_data = try externalMessage.data?.toBocBase64(hasIdx: false)
+                params = [
+                    "address": fromAddress ?? "",
+                    "body": body,
+                    "init_code": init_code ?? "",
+                    "init_data": init_data ?? ""
+                ] as [String: Any]
+                sendRPC(method: "estimateFee", params: params).done { (result: EstimateFeeResult) in
+                    seal.fulfill(result.gasFee)
+                }.catch { error in
+                    seal.reject(error)
+                }
+            } catch let error {
+                seal.reject(error)
+            }
         }
-        return sendRPC(method: "estimateFee", params: params)
     }
     
     
