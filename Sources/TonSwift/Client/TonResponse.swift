@@ -111,7 +111,7 @@ public struct EstimateFeeResult: Codable {
     let sourceFees: SourceFees
     
     public var gasFee: Int64 {
-        return sourceFees.inFwdFee + sourceFees.gasFee + sourceFees.storageFee + sourceFees.fwdFee
+        return sourceFees.gasFee
     }
     
     enum CodingKeys: String, CodingKey {
@@ -121,10 +121,7 @@ public struct EstimateFeeResult: Codable {
     }
     
     struct SourceFees: Codable {
-        public let inFwdFee: Int64
         public let gasFee: Int64
-        public let storageFee: Int64
-        public let fwdFee: Int64
     }
 }
 
