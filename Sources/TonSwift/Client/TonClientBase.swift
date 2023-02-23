@@ -11,7 +11,7 @@ import PromiseKit
 public class TonClientBase {
     public var url: URL
     private var session: URLSession
-    private var apiKey: String
+    var apiKey: String
     
     public init(url: URL, apiKey: String) {
         self.url = url
