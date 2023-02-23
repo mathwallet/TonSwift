@@ -39,7 +39,7 @@ final class TonSwiftTests: XCTestCase {
         let reqeustExpectation = expectation(description: "Tests")
         DispatchQueue.global().async {
             do {
-                let client = TonClient(url: URL(string: "https://toncenter.com/")!,apiKey: "")
+                let client = TonClient(url: URL(string: "https://toncenter.com/")!,apiKey: "98823dc6054d27fb4608f63c98fdc02f2dfaf3fe6b683e02ca5e9f6939758049")
                 let keypair = try TonKeypair(seed: Data(hex: "d2a351c1dcb250fd5380eb4ce3e1d2594c575398fa8d0dadc3987346d5ba453e"))
                 let contract: WalletContract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey)).create() as! WalletContract
                 let externalMessage = try contract.createSignedTransferMessagePayloadString(secretKey: Data(count: 64), address: "EQCBlo5osdqQWEc4YRVaMB7DcP5PVm1qKknAmkttUIclyhgS", amount: BigInt("1000000"), seqno: 9, payload: "123")

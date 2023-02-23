@@ -36,15 +36,16 @@ public class TonClient: TonClientBase {
         return sendRPC(method: "getAddressBalance", params: ["address": address])
     }
     
-    public func getEstimateFee(externalMessage: ExternalMessage) -> Promise<Int64> {
+    public func getEstimateFee(from: String, externalMessage: ExternalMessage) -> Promise<Int64> {
         return Promise<Int64> {seal in
             var params = [String: Any]()
             do {
+                let fromAddress = Address(addressStr: from)?.toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false)
                 let body = try externalMessage.body.toBocBase64(hasIdx: false)
                 let init_code = try externalMessage.code?.toBocBase64(hasIdx: false)
                 let init_data = try externalMessage.data?.toBocBase64(hasIdx: false)
                 params = [
-                    "address": externalMessage.address.toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false),
+                    "address": fromAddress ?? "",
                     "body": body,
                     "init_code": init_code ?? "",
                     "init_data": init_data ?? ""
