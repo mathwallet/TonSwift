@@ -296,7 +296,7 @@ public class BitString {
         if (amount == 0) {
             try writeUInt(number: BigInt(0), bitLength: 4)
         } else {
-            let bytesSize = Int(ceil(Double(amount.bitWidth) / Double(8)))
+            let bytesSize = Int(ceil(Double(amount.magnitude.bitWidth) / Double(8)))
             if (bytesSize >= 16) {
                 throw TonError.otherError("Amount is too big. Maximum amount 2^120-1");
             }

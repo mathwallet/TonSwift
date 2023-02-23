@@ -187,7 +187,7 @@ public class CellBuilder: Cell {
      * @return CellBuilder
      */
     public func storeCoins(coins: BigInt) throws -> CellBuilder {
-        try bits.writeCoins(amount: BigInt(coins))
+        try bits.writeCoins(amount: coins)
         return self
     }
 
