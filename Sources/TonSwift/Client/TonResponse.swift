@@ -57,10 +57,9 @@ public struct AddressInfoResult: Codable {
 
 public struct WalletInfoResult: Codable {
     public let wallet: Bool
-    public let balance: String
     public let accountState: String
-    public let walletType: String
-    public let seqno: Int64
+    public let walletType: String?
+    public let seqno: Int64?
 }
 
 public struct RunGetRunMethodResult: Codable {
