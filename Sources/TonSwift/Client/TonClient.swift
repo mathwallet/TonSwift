@@ -24,8 +24,8 @@ public class TonClient: TonClientBase {
     
     public func getSeqno(address: String) -> Promise<Int64> {
         return Promise{ seal in
-            runGetMethod(address: address, method: "seqno").done { (result: RunGetRunMethodResult) in
-                seal.fulfill(result.num ?? 0)
+            getWalletInfo(address: address).done { walletInfoResult in
+                seal.fulfill(walletInfoResult.seqno ?? 0)
             }.catch { error in
                 seal.reject(error)
             }
