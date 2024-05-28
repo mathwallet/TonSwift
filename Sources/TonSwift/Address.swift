@@ -74,11 +74,13 @@ public class Address {
             isBounceable = false
         } else {
             isUserFriendly = true
-            let parseResult = Address.parseFriendlyAddress(addressString: address)
-            wc = parseResult!.wc
-            hashPart = parseResult!.hashPart
-            isTestOnly = parseResult!.isTestOnly
-            isBounceable = parseResult!.isBounceable
+            guard let parseResult = Address.parseFriendlyAddress(addressString: address) else {
+                return nil
+            }
+            wc = parseResult.wc
+            hashPart = parseResult.hashPart
+            isTestOnly = parseResult.isTestOnly
+            isBounceable = parseResult.isBounceable
         }
     }
     
