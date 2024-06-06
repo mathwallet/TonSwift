@@ -82,4 +82,10 @@ final class TonSwiftTests: XCTestCase {
         }
     }
     
+    func testTonConnectParExample() throws {
+        let par = TonConnectUrlParser.parseString("tc://?v=2&id=4c809e0b5e834098b2a83995ebdfda62a3f839164fc5088edfcc26f17ed6f926&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fapp.stakee.org%2Ftonconnect-manifest.json%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%2C%7B%22name%22%3A%22ton_proof%22%2C%22payload%22%3A%222BJjHWUtwAVGh9TD%22%7D%5D%7D&ret=none")!
+        let url = URL(string: par.payload.manifestUrl)
+        debugPrint(url?.host)
+        debugPrint(par.clientId)
+    }
 }

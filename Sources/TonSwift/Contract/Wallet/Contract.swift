@@ -53,6 +53,12 @@ public class Contract {
         let address = try Address.of(addressStr:"\(self.options?.wc ?? 0):\(stateInitHash.toHexString())" )
         return StateInit(stateInit: stateInit, address: address!, code: codeCell, data: dataCell)
     }
+    
+    public func createTonConnectStateInit() throws -> TonConnectStateInit {
+        let codeCell = try createCodeCell()
+        let dataCell = try createDataCell()
+        return TonConnectStateInit(code: codeCell, data: dataCell)
+    }
 
     // split_depth:(Maybe (## 5))
     // special:(Maybe TickTock)

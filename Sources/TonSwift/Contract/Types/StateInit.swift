@@ -13,3 +13,17 @@ public struct StateInit {
     public let code: Cell
     public let data: Cell
 }
+
+public struct TonConnectStateInit {
+    var code: Cell
+    var data: Cell
+    
+    func store() throws -> Cell {
+        let builder = CellBuilder.beginCell()
+        let _ = try builder.storeBit(bit: false)
+        let _ = try builder.storeBit(bit: false)
+        let _ = try builder.storeMaybe(ref: code)
+        let _ = try builder.storeMaybe(ref: data)
+        return builder
+    }
+}
