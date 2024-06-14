@@ -130,14 +130,14 @@ public struct TonAddressItemReply: Encodable {
     public let address: Address
     public let network: Network
     public let publicKey: Data
-    public let walletStateInit: TonConnectStateInit
+    public let walletStateInit: ConnectStateInit
     
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(address.toString(isUserFriendly: false), forKey: .address)
         try container.encode(publicKey.toHexString(), forKey: .publicKey)
-        try container.encode(walletStateInit.store().toBocBase64(), forKey: .walletStateInit)
+        try container.encode(storeTo(stateInit: walletStateInit), forKey: .walletStateInit)
     }
     enum CodingKeys: String, CodingKey {
         case name
@@ -145,6 +145,28 @@ public struct TonAddressItemReply: Encodable {
         case network
         case publicKey
         case walletStateInit
+    }
+    
+    func storeTo(stateInit: ConnectStateInit) throws -> String {
+        let builder = ConnectBuilder()
+        if let splitDepth = stateInit.splitDepth {
+            try builder.store(bit: true)
+            try builder.store(uint: UInt64(splitDepth), bits: 5)
+        } else {
+            try builder.store(bit: false)
+        }
+        
+        if let ticktock = stateInit.special {
+            try builder.store(bit: true)
+            try builder.store(ticktock)
+        } else {
+            try builder.store(bit: false)
+        }
+        
+        try builder.storeMaybe(ref: stateInit.code)
+        try builder.storeMaybe(ref: stateInit.data)
+        try builder.store(stateInit.libraries)
+        return try builder.endCell().toString()
     }
 }
 

@@ -22,7 +22,7 @@ public struct TonConnectParameterBuilder {
             address: address,
             network: Network.mainnet,
             publicKey: keypair.publicKey,
-            walletStateInit: try contract.createTonConnectStateInit())
+            walletStateInit: try contract.createTonConnectStateInit(walletId: UInt32(contract.getOptions()!.walletId!), publicKey: keypair.publicKey))
           )
         case .tonProof(let payload):
           return ConnectItemReply.tonProof(.success(.init(

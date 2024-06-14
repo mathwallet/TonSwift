@@ -30,6 +30,15 @@ public class Address {
         isUrlSafe = false
     }
     
+    public init(wc: UInt8, hashPart: Data) {
+        self.wc = wc
+        self.hashPart = hashPart
+        self.isTestOnly = false
+        self.isUserFriendly = false
+        self.isBounceable = false
+        self.isUrlSafe = false
+    }
+    
     public init?(addressStr: String) {
         if (addressStr.isEmpty) {
             return nil
@@ -226,3 +235,52 @@ public class Address {
     }
 }
 
+// MARK: - Hashable
+extension Address: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(wc)
+        hasher.combine(hashPart)
+    }
+}
+
+// MARK: - Equatable
+extension Address: Equatable {
+    public static func == (lhs: Address, rhs: Address) -> Bool {
+        if lhs.wc != rhs.wc || lhs.isBounceable != rhs.isBounceable || lhs.isTestOnly != rhs.isTestOnly || lhs.isUrlSafe != rhs.isUrlSafe || lhs.isUserFriendly != rhs.isUserFriendly {
+            return false
+        }
+        
+        return lhs.hashPart == rhs.hashPart
+    }
+}
+
+/// The most compact address encoding that's often used within smart contracts: workchain + hash.
+public struct CompactAddress: Hashable, CellCodable, StaticSize {
+    public static func == (lhs: CompactAddress, rhs: CompactAddress) -> Bool {
+        if lhs.inner != rhs.inner {
+            return false
+        }
+        
+        return true
+    }
+    
+    public static var bitWidth: Int = 8 + 256
+    public let inner: Address
+    
+    init(_ inner: Address) {
+        self.inner = inner
+    }
+    
+    public func storeTo(builder b: ConnectBuilder) throws {
+        try b.store(int: inner.wc, bits: 8)
+        try b.store(data: inner.hashPart)
+    }
+    
+    public static func loadFrom(slice: ConnectSlice) throws -> CompactAddress {
+        return try slice.tryLoad { s in
+            let wc = Int8(try s.loadInt(bits: 8))
+            let hash = try s.loadBytes(32)
+            return CompactAddress(Address(wc: UInt8(wc), hashPart: hash))
+        }
+    }
+}
