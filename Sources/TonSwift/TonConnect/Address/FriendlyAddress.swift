@@ -33,7 +33,7 @@ public struct FriendlyAddress: Codable, Hashable {
         
         let addr = data.subdata(in: 0..<34)
         let crc = data.subdata(in: 34..<36)
-        let calcedCrc = addr.crc16()
+        let calcedCrc = addr.crc16Data()
         
         if calcedCrc[0] != crc[0] || calcedCrc[1] != crc[1] {
             throw TonError.otherError("Invalid checksum: \(data)")
@@ -88,7 +88,7 @@ public struct FriendlyAddress: Codable, Hashable {
         addr[2...] = address.hash
         var addrcrc = Data(count: 36)
         addrcrc[0...] = addr
-        addrcrc[34...] = addr.crc16()
+        addrcrc[34...] = addr.crc16Data()
                 
         if urlSafe {
             return addrcrc.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_")

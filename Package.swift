@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/mxcl/PromiseKit.git", .upToNextMajor(from: "8.1.1")),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0"),
         .package(url: "https://github.com/Flight-School/AnyCodable.git", .exact("0.6.1")),
-        .package(url: "https://github.com/inaka/EventSource.git", .branch("master"))
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.9.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -31,7 +31,7 @@ let package = Package(
                            "PromiseKit",
                            "BigInt",
                            "AnyCodable",
-                           "EventSource"
+                           "Alamofire"
                           ]),
         .testTarget(
             name: "TonSwiftTests",

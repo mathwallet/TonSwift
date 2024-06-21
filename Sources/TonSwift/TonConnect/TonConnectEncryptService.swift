@@ -38,4 +38,18 @@ public struct TonConnectEncryptService {
             secretKey: self.privateKey)
         return nonce + encrypted
     }
+    
+    func decrypt(message: Data, senderPublicKey: Data) throws -> Data {
+      guard message.count >= 24 else {
+        return Data()
+      }
+      let nonce = message[0..<24]
+      let internalMessage = message[24..<message.count]
+      let decrypted = try TweetNacl.NaclBox.open(
+        message: internalMessage,
+        nonce: nonce,
+        publicKey: senderPublicKey,
+        secretKey: self.privateKey)
+      return decrypted
+    }
 }

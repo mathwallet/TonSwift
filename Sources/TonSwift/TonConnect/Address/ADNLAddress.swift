@@ -42,7 +42,7 @@ struct ADNLAddress {
 
     func toString() -> String {
         var data = Data([0x2D]) + self.address
-        let hash = data.crc16()
+        let hash = data.crc16Data()
         data = data + hash
         
         return String(data.toBase32().dropFirst())

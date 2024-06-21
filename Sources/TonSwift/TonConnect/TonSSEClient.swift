@@ -1,49 +1,48 @@
 import Foundation
 
-public class TonSSEClient: NSObject {
+class TonSSEClient: NSObject {
     private var task: URLSessionDataTask?
     private var urlSession: URLSession!
-    private var url: URL
-    var eventHandler: ((Data) -> Void)?
-    var errorHandler: ((TonError) -> Void)?
-    public init(url: URL) {
-        self.url = url
-        super.init()
-    }
-    public func connect(eventHandler: @escaping (Data) -> Void, errorHandler: @escaping (TonError) -> Void) {
+    private var eventReceivedHandler: ((String) -> Void)?
+    private var errorHandler: ((TonError) -> Void)?
+    private var eventStreamURL: URL
+    
+    init(url: URL) {
+        self.eventStreamURL = url
         let configuration = URLSessionConfiguration.default
-        urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
-        var request = URLRequest(url: url)
-        request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
-        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
-//        request.setValue("keep-alive", forHTTPHeaderField: "Connection")
-        request.httpMethod = "GET"
-        task = urlSession.dataTask(with: request)
-        task?.resume()
-        self.errorHandler = errorHandler
-        self.eventHandler = eventHandler
+        super.init()
+        self.urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
-
-    public func disconnect() {
-        task?.cancel()
+    
+    func onEventReceived(_ handler: @escaping (String) -> Void) {
+        self.eventReceivedHandler = handler
+    }
+    
+    func sseErrorReceived(_ handler: @escaping (TonError) -> Void) {
+        self.errorHandler = handler
+    }
+    
+    func startListening() {
+        var request = URLRequest(url: eventStreamURL)
+        request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+        self.task = urlSession.dataTask(with: request)
+        self.task?.resume()
+    }
+    
+    func stopListening() {
+        self.task?.cancel()
     }
 }
 
+// 扩展 SSEClient 以符合 URLSessionDataDelegate
 extension TonSSEClient: URLSessionDataDelegate {
-    
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        guard let eventString = String(data: data, encoding: .utf8) else {
-            return
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        if let eventString = String(data: data, encoding: .utf8) {
+            eventReceivedHandler?(eventString)
         }
-        handleEvent(eventString)
     }
-
-    private func handleEvent(_ event: String) {
-        // 解析和处理事件
-        debugPrint(event)
-        if event.hasPrefix("data: ") {
-            let dataString = event.dropFirst(6)
-            self.eventHandler?(dataString.data(using: .utf8)!)
-        }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        errorHandler?(TonError.otherError("sse error"))
     }
 }
