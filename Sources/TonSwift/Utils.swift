@@ -11,6 +11,8 @@ import TweetNacl
 import CommonCrypto
 import BigInt
 
+fileprivate let alphabet = "abcdefghijklmnopqrstuvwxyz234567"
+
 public struct Utils {
     public init() {}
     
@@ -111,6 +113,27 @@ public extension Data {
     mutating func writeInt64LE(_ value: Int64) {
         self.append(contentsOf: Swift.withUnsafeBytes(of: value.littleEndian) { Array($0)})
     }
+    
+    func toBase32() -> String {
+        let length = self.count
+        var bits = 0
+        var value = 0
+        var output = ""
+        
+        for i in 0..<length {
+            value = (value << 8) | Int(self[i])
+            bits += 8
+            
+            while bits >= 5 {
+                output.append(alphabet[alphabet.index(alphabet.startIndex, offsetBy: (value >> (bits - 5)) & 31)])
+                bits -= 5
+            }
+        }
+        if bits > 0 {
+            output.append(alphabet[alphabet.index(alphabet.startIndex, offsetBy: (value << (5 - bits)) & 31)])
+        }
+        return output
+    }
 }
 
 public enum BitsMode {
@@ -143,5 +166,94 @@ extension BigInt {
 extension Int {
     public func bitsCount(mode: BitsMode) throws -> Int {
         return try BigInt(self).bitsCount(mode: mode)
+    }
+}
+
+extension String {
+    public func fromBase32() throws -> Data {
+        let cleanedInput = self.lowercased()
+        let length = cleanedInput.count
+        var bits = 0
+        var value = 0
+        
+        var index = 0
+        var output = Data(capacity: (length * 5 / 8) | 0)
+        
+        for i in cleanedInput.indices {
+            let char = try readChar(alphabet: alphabet, char: cleanedInput[i])
+            value = (value << 5) | char
+            bits += 5
+            
+            if bits >= 8 {
+                output[index] = UInt8((value >> (bits - 8)) & 255)
+                index += 1
+                bits -= 8
+            }
+        }
+        return output
+    }
+}
+
+extension Data {
+    func crc16Data() -> Data {
+        let poly: UInt32 = 0x1021
+        var reg: UInt32 = 0
+        var message = self
+        message.append(0)
+        message.append(0)
+        
+        for byte in message {
+            var mask: UInt8 = 0x80
+            while mask > 0 {
+                reg <<= 1
+                if byte & mask != 0 {
+                    reg += 1
+                }
+                
+                mask >>= 1
+                if reg > 0xffff {
+                    reg &= 0xffff
+                    reg ^= poly
+                }
+            }
+        }
+        
+        let highByte = UInt8(reg / 256)
+        let lowByte = UInt8(reg % 256)
+        
+        return Data([highByte, lowByte])
+    }
+    
+    func crc32cData() -> Data {
+        let poly: UInt32 = 0x82f63b78
+        var crc: UInt32 = 0 ^ 0xffffffff
+        
+        for i in 0..<self.count {
+            crc ^= UInt32(self[i])
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+            crc = ((crc & 1) != 0) ? (crc >> 1) ^ poly : crc >> 1
+        }
+        crc = crc ^ 0xffffffff
+
+        var res = Data(count: 4)
+        res.withUnsafeMutableBytes { (resPointer: UnsafeMutableRawBufferPointer) -> Void in
+            resPointer.storeBytes(of: crc.littleEndian, as: UInt32.self)
+        }
+        
+        return res
+    }
+}
+
+public func readChar(alphabet: String, char: Character) throws -> Int {
+    if let idx = alphabet.firstIndex(of: char) {
+        return alphabet.distance(from: alphabet.startIndex, to: idx)
+    } else {
+        throw TonError.otherError("Invalid character found: \(char)")
     }
 }

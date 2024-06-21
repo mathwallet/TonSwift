@@ -15,10 +15,6 @@ public struct TonWallet {
         self.walletVersion = walletVersion
         self.options = options
     }
-//    public init (walletVersion : WalletVersion) {
-//        self.walletVersion = walletVersion
-//        self.options = Options.builder().build()
-//    }
     
     public func create() throws -> Contract {
         switch walletVersion {

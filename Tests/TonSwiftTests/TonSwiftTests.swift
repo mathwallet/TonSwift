@@ -82,10 +82,33 @@ final class TonSwiftTests: XCTestCase {
         }
     }
     
-    func testTonConnectParExample() throws {
-        let par = TonConnectUrlParser.parseString("tc://?v=2&id=4c809e0b5e834098b2a83995ebdfda62a3f839164fc5088edfcc26f17ed6f926&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fapp.stakee.org%2Ftonconnect-manifest.json%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%2C%7B%22name%22%3A%22ton_proof%22%2C%22payload%22%3A%222BJjHWUtwAVGh9TD%22%7D%5D%7D&ret=none")!
-        let url = URL(string: par.payload.manifestUrl)
-        debugPrint(url?.host)
-        debugPrint(par.clientId)
+    func testTonConnectTestExample() throws {
+        
+        do {
+            let par = TonConnectUrlParser.parseString("tc://?v=2&id=fac29500fe730756b48c00586bd33a27f322ff2858bb825a4eb4244ba1b6073f&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fgetgems.io%2Ftcm.json%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%2C%7B%22name%22%3A%22ton_proof%22%2C%22payload%22%3A%22gems%22%7D%5D%7D&ret=none")!
+            let keypair = try TonKeypair(mnemonics: "speak intact staff better relief amount bamboo marble scrap advance dice legal alter portion mean father law coffee income moral resource pull there slice")
+            let wallet = TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey))
+            let reqeustExpectation = expectation(description: "Tests")
+            DispatchQueue.global().async {
+                do {
+                    let connect = TonConnect(parameters: par, keyPair: keypair, address: try wallet.create().getAddress().toString(isUserFriendly: false))
+                    connect.connect().done { connectResponse in
+//                        connect.sse { data in
+//                            
+//                        } errorHandler: { error in
+//                            debugPrint(error.errorDescription ?? "")
+//                        }
+
+                    }.catch { error in
+                        debugPrint(error)
+                    }
+                } catch let error {
+                    debugPrint(error)
+                }
+            }
+            wait(for: [reqeustExpectation], timeout: 1000)
+        } catch let error {
+            debugPrint(error)
+        }
     }
 }

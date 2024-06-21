@@ -1,12 +1,12 @@
 import Foundation
 
-enum BocMagic: UInt32 {
+enum ConnectBocMagic: UInt32 {
     case V1 = 0x68ff65f3
     case V2 = 0xacc3a728
     case V3 = 0xb5ee9c72
 }
 
-/// ConnectBoc = Bag-of-Cells, data structure for efficient storage and transmission of a collection of cells.
+/// BoC = Bag-of-Cells, data structure for efficient storage and transmission of a collection of cells.
 struct ConnectBoc {
     let size: Int
     let offBytes: Int
@@ -20,7 +20,7 @@ struct ConnectBoc {
     
     init(data: Data) throws {
         let reader = ConnectSlice(data: data)
-        guard let magic = BocMagic(rawValue: UInt32(try reader.loadUint(bits: 32))) else {
+        guard let magic = ConnectBocMagic(rawValue: UInt32(try reader.loadUint(bits: 32))) else {
             throw TonError.otherError("Invalid magic")
         }
         switch magic {
@@ -35,9 +35,9 @@ struct ConnectBoc {
                 cellData = try reader.loadBytes(totalCellSize)
                 rootIndices = [0]
             
-                if magic == BocMagic.V2 {
+                if magic == ConnectBocMagic.V2 {
                     let crc32 = try reader.loadBytes(4)
-                    if data.subdata(in: 0..<data.count-4).crc32c() != crc32 {
+                    if data.subdata(in: 0..<data.count-4).crc32cData() != crc32 {
                         throw TonError.otherError("Invalid CRC32C")
                     }
                 }
@@ -70,7 +70,7 @@ struct ConnectBoc {
                 if hasCrc32c {
                     let crc32 = try reader.loadBytes(4)
                     
-                    if data.subdata(in: 0..<(data.count - 4)).crc32c() != crc32 {
+                    if data.subdata(in: 0..<(data.count - 4)).crc32cData() != crc32 {
                         throw TonError.otherError("Invalid CRC32C")
                     }
                 }
@@ -138,7 +138,7 @@ func deserializeBoc(src: Data) throws -> [ConnectCell] {
             if let result = cells[Int(r)].result {
                 refs.append(result)
             } else {
-                throw TonError.otherError("Invalid ConnectBoc file")
+                throw TonError.otherError("Invalid BOC file")
             }
         }
         
@@ -231,7 +231,7 @@ func serializeBoc(root: ConnectCell, idx: Bool, crc32: Bool) throws -> Data {
     }
 
     if hasCrc32c {
-        let crc32 = (try builder.alignedBitstring()).crc32c()
+        let crc32 = (try builder.alignedBitstring()).crc32cData()
         try builder.store(data: crc32)
     }
 

@@ -253,34 +253,3 @@ extension Address: Equatable {
         return lhs.hashPart == rhs.hashPart
     }
 }
-
-/// The most compact address encoding that's often used within smart contracts: workchain + hash.
-public struct CompactAddress: Hashable, CellCodable, StaticSize {
-    public static func == (lhs: CompactAddress, rhs: CompactAddress) -> Bool {
-        if lhs.inner != rhs.inner {
-            return false
-        }
-        
-        return true
-    }
-    
-    public static var bitWidth: Int = 8 + 256
-    public let inner: Address
-    
-    init(_ inner: Address) {
-        self.inner = inner
-    }
-    
-    public func storeTo(builder b: ConnectBuilder) throws {
-        try b.store(int: inner.wc, bits: 8)
-        try b.store(data: inner.hashPart)
-    }
-    
-    public static func loadFrom(slice: ConnectSlice) throws -> CompactAddress {
-        return try slice.tryLoad { s in
-            let wc = Int8(try s.loadInt(bits: 8))
-            let hash = try s.loadBytes(32)
-            return CompactAddress(Address(wc: UInt8(wc), hashPart: hash))
-        }
-    }
-}
