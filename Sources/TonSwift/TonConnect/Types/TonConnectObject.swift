@@ -20,7 +20,7 @@ public struct ConnectEventSuccess: Encodable {
         public let device: DeviceInfo
     }
     public let event = "connect"
-    public let id = Int(1718940399)
+    public let id = Int(Date().timeIntervalSince1970)
     public let payload: Payload
 }
 
@@ -39,7 +39,7 @@ public struct ConnectEventError: Encodable {
         case userDeclinedTheConnection = 300
     }
     public let event = "connect_error"
-    public let id = Int(1718940399)
+    public let id = Int(Date().timeIntervalSince1970)
     public let payload: Payload
 }
 
@@ -75,7 +75,7 @@ public struct TonProofItemReplySuccess: Encodable {
                 domain: String,
                 payload: String,
                 privateKey: Data) {
-        let timestamp = UInt64(1718940399)
+        let timestamp = UInt64(Date().timeIntervalSince1970)
         let domain = Domain(domain: domain)
         let signature = Signature(
             address: address,

@@ -85,7 +85,7 @@ final class TonSwiftTests: XCTestCase {
     func testTonConnectTestExample() throws {
         
         do {
-            let par = TonConnectUrlParser.parseString("tc://?v=2&id=fac29500fe730756b48c00586bd33a27f322ff2858bb825a4eb4244ba1b6073f&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fgetgems.io%2Ftcm.json%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%2C%7B%22name%22%3A%22ton_proof%22%2C%22payload%22%3A%22gems%22%7D%5D%7D&ret=none")!
+            let par = TonConnectUrlParser.parseString("tc://?v=2&id=535fb9eaa95f5342b5f35ff6fc31fad847e7bd2372109168e9c0045b4a31d918&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fgetgems.io%2Ftcm.json%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%2C%7B%22name%22%3A%22ton_proof%22%2C%22payload%22%3A%22gems%22%7D%5D%7D&ret=none")!
             let keypair = try TonKeypair(mnemonics: "speak intact staff better relief amount bamboo marble scrap advance dice legal alter portion mean father law coffee income moral resource pull there slice")
             let wallet = TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey))
             let reqeustExpectation = expectation(description: "Tests")
@@ -93,11 +93,11 @@ final class TonSwiftTests: XCTestCase {
                 do {
                     let connect = TonConnect(parameters: par, keyPair: keypair, address: try wallet.create().getAddress().toString(isUserFriendly: false))
                     connect.connect().done { connectResponse in
-//                        connect.sse { data in
-//                            
-//                        } errorHandler: { error in
-//                            debugPrint(error.errorDescription ?? "")
-//                        }
+                        connect.sse { data in
+                            
+                        } errorHandler: { error in
+                            debugPrint(error.errorDescription ?? "")
+                        }
 
                     }.catch { error in
                         debugPrint(error)
