@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import PromiseKit
 
 public class TonConnect {
     
@@ -41,22 +40,23 @@ public class TonConnect {
         let url = URL(string: "\(self.bridgeUrl)/events?client_id=\(self.encryptService.publicKey.toHexString())\((last_event_id != nil) ? "&last_event_id=\(last_event_id!)" : "")")!
         self.sseClient = TonSSEClient(url: url)
         sseClient?.startListening()
-        sseClient?.onEventReceived { event in
-            if event.hasPrefix("event: message") {
-                let resultArray = event.components(separatedBy: "data:")
-                self.last_event_id = resultArray.first?.replacingOccurrences(of: "event: message\nid: ", with: "") ?? ""
-                if resultArray.count > 1,
-                   let result = try? JSONDecoder().decode(SSEResopnseData.self, from: resultArray[1].data(using: .utf8)!),
-                   let messageData = Data(base64Encoded: result.message),
-                   let decryptData = try? self.encryptService.decrypt(message: messageData, senderPublicKey: Data(hex: self.parameters.clientId))
-                    {
-                    do {
-                        let dappRequest = try JSONDecoder().decode(TonConnectDappRequest.self, from: decryptData)
-                        sseHandler(dappRequest, nil)
-                    } catch let error {
-                        debugPrint(error)
+        sseClient?.onEventReceived { eventResponse in
+            switch eventResponse {
+            case .heartBeat:
+                break
+            case .message(let string, let data):
+                if let _data = data {
+                    self.last_event_id = string
+                    if let result = try? JSONDecoder().decode(SSEResopnseData.self, from: _data),
+                       let messageData = Data(base64Encoded: result.message),
+                       let decryptData = try? self.encryptService.decrypt(message: messageData, senderPublicKey: Data(hex: self.parameters.clientId)) {
+                        do {
+                            let dappRequest = try JSONDecoder().decode(TonConnectDappRequest.self, from: decryptData)
+                            sseHandler(dappRequest, nil)
+                        } catch let error {
+                            sseHandler(nil, TonError.otherError(error.localizedDescription))
+                        }
                     }
-                    
                 }
             }
         }
@@ -66,8 +66,7 @@ public class TonConnect {
         }
     }
     
-    func sendBody(body: String) -> Promise<TonConnectResponse> {
-        let rp = Promise<Data>.pending()
+    func sendBody(body: String, success: @escaping (_ response: TonConnectResponse) -> Void, failure: @escaping (_ error: TonError) -> Void) {
         var task: URLSessionTask? = nil
         let session = URLSession(configuration: .default)
         let queue = DispatchQueue(label: "ton.post")
@@ -79,59 +78,79 @@ public class TonConnect {
             request.httpBody = body.data(using: .utf8)
             task = session.dataTask(with: request) { data, response, error in
                 if let _ = error {
-                    rp.resolver.reject(TonError.otherError("tonconnect error"))
+                    failure(TonError.otherError("tonconnect error"))
                     return
                 } else if let _data = data {
-                    rp.resolver.fulfill(_data)
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    do {
+                        let result = try decoder.decode(TonConnectResponse.self, from: _data)
+                        if result.statusCode == 200 {
+                            success(result)
+                            
+                        }
+                        failure(TonError.otherError(result.message))
+                    } catch {
+                            failure(TonError.providerError("Parameter error or received wrong message"))
+                    }
                 }
             }
             task!.resume()
-        }
-        
-        return rp.promise.ensure {
-            task = nil
-        }.map(on: queue){ (data: Data) -> TonConnectResponse in
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            do {
-                let result = try decoder.decode(TonConnectResponse.self, from: data)
-                if result.statusCode == 200 {
-                    return result
-                    
-                }
-                throw TonError.otherError(result.message)
-            } catch {
-                throw TonError.providerError("Parameter error or received wrong message")
-            }
         }
     }
 }
 
 extension TonConnect {
-    public func connect() -> Promise<TonConnectResponse> {
-        return Promise<TonConnectResponse> {seal in
-            let manifest = TonConnectManifest(url: URL(string: self.parameters.payload.manifestUrl))            
+    public func connect(success: @escaping (_ result: TonConnectDappRequest) -> Void, failure: @escaping (_ error: TonError) -> Void) {
+        do {
+            let manifest = TonConnectManifest(url: URL(string: self.parameters.payload.manifestUrl))
             let body = try TonConnectServiceBodyBuilder.buildConnectBody(keypair: keyPair,
                                                                          contract: contract,
                                                                          parameters: parameters,
                                                                          connecteEncryptService: self.encryptService,
                                                                          manifest: manifest)
-            sendBody(body: body).done { response in
-                seal.fulfill(response)
-            }.catch { error in
-                seal.reject(error)
+            sendBody(body: body) { response in
+                self.sse { result, error in
+                    if let _result = result {
+                        success(_result)
+                    } else if let _error = error {
+                        failure(_error)
+                    } else {
+                        failure(TonError.otherError("tonconnect error"))
+                    }
+                }
+            } failure: { error in
+                failure(error)
             }
+        } catch let error {
+            failure(error as! TonError)
         }
     }
-    public func sendTransaction(seqno: UInt64, parameters: TonConnectDappRequest.TonConnectParam) -> Promise<TonConnectResponse> {
-        return Promise<TonConnectResponse> {seal in
+    
+    public func disConnect(success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) -> Void) throws {
+        do {
+            let body = try TonConnectServiceBodyBuilder.buildDisConnectBody(keypair: keyPair, id: self.last_event_id ?? "", clientId: parameters.clientId, connecteEncryptService: self.encryptService)
+            sendBody(body: body) { response in
+                success(true)
+            } failure: { error in
+                failure(error)
+            }
+        } catch let error {
+            failure(TonError.otherError(error.localizedDescription))
+        }
+    }
+    
+    public func sendTransaction(seqno: UInt64, parameters: TonConnectDappRequest.TonConnectParam) {
+        do {
             let sender = try ConnectAddress.parse(address)
             let body = try TonConnectServiceBodyBuilder.buildSendTransactionBody(keypair: keyPair, seqno: seqno, sender: sender, parameters: parameters, contract: contract)
-            sendBody(body: body).done { response in
-                seal.fulfill(response)
-            }.catch { error in
-                seal.reject(error)
-            }
+//            sendBody(body: body).done { response in
+//                //                seal.fulfill(response)
+//            }.catch { error in
+//                //                seal.reject(error)
+//            }
+        } catch let error {
+            
         }
     }
 }

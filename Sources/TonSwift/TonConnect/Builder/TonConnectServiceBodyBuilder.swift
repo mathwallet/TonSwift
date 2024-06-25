@@ -25,6 +25,15 @@ public struct TonConnectServiceBodyBuilder {
         return body
     }
     
+    public static func buildDisConnectBody(keypair: TonKeypair,
+                                           id: String,
+                                           clientId: String,
+                                           connecteEncryptService: TonConnectEncryptService) throws -> String {
+        let body = try TonConnectConnectBodyBuilder.buildDisConnectBody(id: id, clientId: clientId, connecteEncryptService: connecteEncryptService)
+        return body
+    }
+    
+    
     public static func buildSendTransactionBody(keypair: TonKeypair,
                                                 seqno: UInt64,
                                                 sender: ConnectAddress,
@@ -37,7 +46,11 @@ public struct TonConnectServiceBodyBuilder {
                 stateInit: message.stateInit,
                 payload: message.payload)
         }
-        let body = try TonConnectTransferMessageBuilder.sendTonConnectTransfer(contract: contract, keyPair: keypair, seqno: seqno, payloads: payloads, sender: sender)
+        let body = try TonConnectTransferMessageBuilder.sendTonConnectTransfer(contract: contract,
+                                                                               keyPair: keypair,
+                                                                               seqno: seqno,
+                                                                               payloads: payloads,
+                                                                               sender: sender)
         return body
     }
 }

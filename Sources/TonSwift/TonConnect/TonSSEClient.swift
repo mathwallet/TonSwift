@@ -3,7 +3,7 @@ import Foundation
 class TonSSEClient: NSObject {
     private var task: URLSessionDataTask?
     private var urlSession: URLSession!
-    private var eventReceivedHandler: ((String) -> Void)?
+    private var eventReceivedHandler: ((TonSSEClientResponse) -> Void)?
     private var errorHandler: ((TonError) -> Void)?
     private var eventStreamURL: URL
     
@@ -14,7 +14,7 @@ class TonSSEClient: NSObject {
         self.urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
     
-    func onEventReceived(_ handler: @escaping (String) -> Void) {
+    func onEventReceived(_ handler: @escaping (TonSSEClientResponse) -> Void) {
         self.eventReceivedHandler = handler
     }
     
@@ -38,11 +38,25 @@ class TonSSEClient: NSObject {
 extension TonSSEClient: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         if let eventString = String(data: data, encoding: .utf8) {
-            eventReceivedHandler?(eventString)
+            if eventString.hasPrefix("event: message") {
+                let resultArray = eventString.components(separatedBy: "data:")
+                let id = resultArray.first?.replacingOccurrences(of: "event: message\nid: ", with: "") ?? ""
+                if resultArray.count > 1 {
+                    let messageData = resultArray[1].data(using: .utf8)
+                    eventReceivedHandler?(TonSSEClientResponse.message(id, messageData))
+                }
+            } else if eventString.hasPrefix("event: heartbeat") {
+                eventReceivedHandler?(TonSSEClientResponse.heartBeat)
+            }
         }
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         errorHandler?(TonError.otherError("sse error"))
     }
+}
+
+public enum TonSSEClientResponse {
+    case heartBeat
+    case message(String, Data?)
 }

@@ -22,13 +22,13 @@ final class TonSwiftTests: XCTestCase {
         let reqeustExpectation = expectation(description: "Tests")
         DispatchQueue.global().async {
             do {
-                let client = TonClient(url: URL(string: "https://toncenter.com")!,apiKey: "")
+                let client = TonClient(url: URL(string: "https://toncenter.com")!,apiKey: "98823dc6054d27fb4608f63c98fdc02f2dfaf3fe6b683e02ca5e9f6939758049")
                 let result = try client.getSeqno(address: "EQCVuwSIBGJU0fY4Waw4K2kakJAMayY-E4COTv-L3pfTNVgs").wait()
                 debugPrint(result)
                 
                 reqeustExpectation.fulfill()
             } catch {
-                //debugPrint(error.localizedDescription)
+                debugPrint(error.localizedDescription)
                 reqeustExpectation.fulfill()
             }
         }
@@ -92,27 +92,26 @@ final class TonSwiftTests: XCTestCase {
     func testTonConnectTestExample() throws {
         
         do {
-            let par = TonConnectUrlParser.parseString("tc://?v=2&id=286e38913a525df79c054b9a3a14a425ac5c17b41454c55440e905b5c458c07d&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fdedust.io%2Fapi%2Ftonconnect-manifest%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%5D%7D")!
-            let keypair = try TonKeypair(mnemonics: "speak intact staff better relief amount bamboo marble scrap advance dice legal alter portion mean father law coffee income moral resource pull there slice")
+            let par = TonConnectUrlParser.parseString("tc://?v=2&id=e9d18662a93e4bf10476683be6d820addff73daf8764c452dbdbbd34c9198b15&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fton-connect.github.io%2Fdemo-dapp-with-react-ui%2Ftonconnect-manifest.json%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%2C%7B%22name%22%3A%22ton_proof%22%2C%22payload%22%3A%22eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjoiMjExZTQwMzA3MDUzZWY3M2Q2NzY3MWUwZjM2ZDAyNjQ4ZDA3MDQyZDlhOTk0NjNkNmFhZWU4YWU2M2NiMzdhZiIsImlhdCI6MTcxOTIxNzEwMSwiZXhwIjoxNzE5MjE4MDAxfQ.UMk3DRbbuLAePDyPO_NRO1nTDz9hSF6GEEEQKDKDFEQ%22%7D%5D%7D&ret=none")!
+            let keypair = try TonKeypair(mnemonics: "")
             let wallet = TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey))
+            let address = try wallet.create().getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false)
+            let contract = ConnectContract(publicKey: keypair.publicKey, addressString: address)
             let reqeustExpectation = expectation(description: "Tests")
             DispatchQueue.global().async {
                 do {
                     let connect = TonConnect(parameters: par, keyPair: keypair, address: try wallet.create().getAddress().toString(isUserFriendly: false))
-                    connect.connect().done { connectResponse in
-                        connect.sse { result, error in
-                            debugPrint(result?.method)
-                            debugPrint(result?.params)
-                        }
-
-                    }.catch { error in
-                        debugPrint(error)
+                    connect.connect { result in
+                        let body = try! TonConnectServiceBodyBuilder.buildSendTransactionBody(keypair: keypair, seqno: UInt64(1111), sender: try! ConnectAddress.parse(address), parameters: result.params.first!, contract: contract)
+                        debugPrint(body)
+                    } failure: { error in
+                        
                     }
                 } catch let error {
                     debugPrint(error)
                 }
             }
-            wait(for: [reqeustExpectation], timeout: 1000)
+            wait(for: [reqeustExpectation], timeout: 300)
         } catch let error {
             debugPrint(error)
         }

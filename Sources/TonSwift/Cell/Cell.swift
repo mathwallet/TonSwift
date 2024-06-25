@@ -357,7 +357,7 @@ public class Cell {
     }
 
     public func toBocBase64(hasIdx: Bool, hashCrc32: Bool, hasCacheBits: Bool) throws -> String {
-        return try toBocBase64(hasIdx: hasIdx, hashCrc32: hashCrc32, hasCacheBits: hasCacheBits).bytes.toBase64()
+        return try toBoc(hasIdx: hasIdx, hashCrc32: hashCrc32, hasCacheBits: hasCacheBits).bytes.toBase64()
     }
 
     /**
