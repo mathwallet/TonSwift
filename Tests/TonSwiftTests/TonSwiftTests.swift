@@ -90,7 +90,6 @@ final class TonSwiftTests: XCTestCase {
     }
     
     func testTonConnectTestExample() throws {
-        
         do {
             let par = TonConnectUrlParser.parseString("tc://?v=2&id=e9d18662a93e4bf10476683be6d820addff73daf8764c452dbdbbd34c9198b15&r=%7B%22manifestUrl%22%3A%22https%3A%2F%2Fton-connect.github.io%2Fdemo-dapp-with-react-ui%2Ftonconnect-manifest.json%22%2C%22items%22%3A%5B%7B%22name%22%3A%22ton_addr%22%7D%2C%7B%22name%22%3A%22ton_proof%22%2C%22payload%22%3A%22eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjoiMjExZTQwMzA3MDUzZWY3M2Q2NzY3MWUwZjM2ZDAyNjQ4ZDA3MDQyZDlhOTk0NjNkNmFhZWU4YWU2M2NiMzdhZiIsImlhdCI6MTcxOTIxNzEwMSwiZXhwIjoxNzE5MjE4MDAxfQ.UMk3DRbbuLAePDyPO_NRO1nTDz9hSF6GEEEQKDKDFEQ%22%7D%5D%7D&ret=none")!
             let keypair = try TonKeypair(mnemonics: "")

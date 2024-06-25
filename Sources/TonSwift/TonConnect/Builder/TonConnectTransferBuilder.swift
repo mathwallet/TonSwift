@@ -12,7 +12,7 @@ public struct TonConnectTransferBuilder {
     public static func createRequestTransactionBoc(contract: ConnectContract,
                                                    keyPair: TonKeypair,
                                                    seqno: UInt64,
-                                                   parameters: TonConnectDappRequest.TonConnectParam) async throws  -> String{
+                                                   parameters: TonConnectDappRequest.TonConnectParam) throws  -> String{
         let payloads = parameters.messages.map { message in
             TonConnectTransferMessageBuilder.Payload(
                 value: BigInt(integerLiteral: message.amount),

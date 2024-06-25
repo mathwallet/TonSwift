@@ -21,7 +21,7 @@ public protocol TypeCoder {
 }
 
 extension CellCodable {
-    static func defaultCoder() -> some TypeCoder {
+    static func defaultCoder() -> any TypeCoder {
         DefaultCoder<Self>()
     }
 }
