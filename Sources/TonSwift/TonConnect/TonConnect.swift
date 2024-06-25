@@ -127,7 +127,7 @@ extension TonConnect {
         }
     }
     
-    public func disConnect(success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) -> Void) throws {
+    public func disConnect(success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) -> Void) {
         do {
             let body = try TonConnectServiceBodyBuilder.buildDisConnectBody(keypair: keyPair, id: self.last_event_id ?? "", clientId: parameters.clientId, connecteEncryptService: self.encryptService)
             sendBody(body: body) { response in
@@ -140,19 +140,19 @@ extension TonConnect {
         }
     }
     
-    public func sendTransaction(seqno: UInt64, parameters: TonConnectDappRequest.TonConnectParam) {
-        do {
-            let sender = try ConnectAddress.parse(address)
-            let body = try TonConnectServiceBodyBuilder.buildSendTransactionBody(keypair: keyPair, seqno: seqno, sender: sender, parameters: parameters, contract: contract)
-//            sendBody(body: body).done { response in
-//                //                seal.fulfill(response)
-//            }.catch { error in
-//                //                seal.reject(error)
-//            }
-        } catch let error {
-            
-        }
-    }
+//    public func sendTransaction(seqno: UInt64, parameters: TonConnectDappRequest.TonConnectParam) {
+//        do {
+//            let sender = try ConnectAddress.parse(address)
+//            let body = try TonConnectServiceBodyBuilder.buildSendTransactionBody(keypair: keyPair, seqno: seqno, sender: sender, parameters: parameters, contract: contract)
+////            sendBody(body: body).done { response in
+////                //                seal.fulfill(response)
+////            }.catch { error in
+////                //                seal.reject(error)
+////            }
+//        } catch let error {
+//            
+//        }
+//    }
 }
 
 public struct SSEResopnse: Decodable {
