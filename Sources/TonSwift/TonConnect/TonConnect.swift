@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PromiseKit
 
 public class TonConnect {
     
@@ -98,6 +99,44 @@ public class TonConnect {
             task!.resume()
         }
     }
+    
+    public static func maniFest(path: String) -> Promise<ManifestResult> {
+        let (promise, seal) = Promise<ManifestResult>.pending()
+        var task: URLSessionTask? = nil
+        let session = URLSession(configuration: .default)
+        let queue = DispatchQueue(label: "ton.manifest")
+        queue.async {
+            guard let getUrl = URL(string: path) else {
+                seal.reject(TonError.providerError("Wrong manifesturl"))
+                return
+            }
+            
+            var urlRequest = URLRequest(url: getUrl, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
+            urlRequest.httpMethod = "GET"
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+            task = session.dataTask(with: urlRequest){ (data, response, error) in
+                if error != nil {
+                    seal.reject(TonError.providerError(error!.localizedDescription))
+                    return
+                }
+                if data != nil {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    do {
+                        let result = try decoder.decode(ManifestResult.self, from: data!)
+                        seal.fulfill(result)
+                    } catch {
+                        seal.reject(TonError.providerError("Parameter error Manifest"))
+                    }
+                } else {
+                    seal.reject(TonError.providerError("maniFest error"))
+                }
+            }
+            task?.resume()
+        }
+        return promise
+    }
 }
 
 extension TonConnect {
@@ -164,4 +203,12 @@ public struct SSEResopnse: Decodable {
 public struct SSEResopnseData: Decodable {
     public let from: String
     public let message: String
+}
+
+public struct ManifestResult: Decodable {
+    public let url: String
+    public let name: String
+    public let iconUrl: String
+    public let termsOfUseUrl: String
+    public let privacyPolicyUrl: String
 }
