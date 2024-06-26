@@ -152,6 +152,7 @@ extension TonConnect {
                 success(true, nil)
                 self.sse { result, error in
                     if let _result = result {
+                        self.last_event_id = _result.id
                         success(nil, _result)
                     } else if let _error = error {
                         failure(_error)
