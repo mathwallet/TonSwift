@@ -10,6 +10,7 @@ import Foundation
 public struct TonConnectDappRequest: Decodable {
     public enum Method: String, Decodable {
         case sendTransaction
+        case disconnect
     }
     
     public struct TonConnectParam: Decodable {
