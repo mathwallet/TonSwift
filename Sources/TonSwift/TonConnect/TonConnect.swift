@@ -140,7 +140,7 @@ public class TonConnect {
 }
 
 extension TonConnect {
-    public func connect(success: @escaping (_ result: TonConnectDappRequest) -> Void, failure: @escaping (_ error: TonError) -> Void) {
+    public func connect(success: @escaping (_ isConnect: Bool?,_ result: TonConnectDappRequest?) -> Void, failure: @escaping (_ error: TonError) -> Void) {
         do {
             let manifest = TonConnectManifest(url: URL(string: self.parameters.payload.manifestUrl))
             let body = try TonConnectServiceBodyBuilder.buildConnectBody(keypair: keyPair,
@@ -149,9 +149,10 @@ extension TonConnect {
                                                                          connecteEncryptService: self.encryptService,
                                                                          manifest: manifest)
             sendBody(body: body) { response in
+                success(true, nil)
                 self.sse { result, error in
                     if let _result = result {
-                        success(_result)
+                        success(nil, _result)
                     } else if let _error = error {
                         failure(_error)
                     } else {
