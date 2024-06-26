@@ -88,7 +88,7 @@ public class TonConnect {
                         let result = try decoder.decode(TonConnectResponse.self, from: _data)
                         if result.statusCode == 200 {
                             success(result)
-                            
+                            return
                         }
                         failure(TonError.otherError(result.message))
                     } catch {
