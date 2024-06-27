@@ -62,6 +62,32 @@ public struct WalletInfoResult: Codable {
     public let seqno: Int64?
 }
 
+public struct JettonsTokenResult: Codable {
+    public let totalSupply: UInt64
+    public let mintable: Bool
+    public let adminAddress: String
+    public let jettonContent: JettonContent
+    public let jettonWalletCode: String
+    public let contractType: String
+    
+    public struct JettonContent: Codable {
+        public let type: String
+        public let data: JettonContentData
+    }
+    
+    public struct JettonContentData: Codable {
+        public let uri: String
+        public let decimals: String
+    }
+}
+
+public struct TokenResult: Codable {
+    public var name: String?
+    public var symbol: String?
+    public var decimals: String?
+    public var image: String?
+}
+
 public struct RunGetRunMethodResult: Codable {
     public let type: String
     public let gasUsed: Int
