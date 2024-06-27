@@ -168,9 +168,9 @@ extension TonConnect {
         }
     }
     
-    public func disConnect(success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) -> Void) {
+    public func cancelRequest(success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) -> Void) {
         do {
-            let body = try TonConnectServiceBodyBuilder.buildDisConnectBody(keypair: keyPair, id: self.last_event_id ?? "", clientId: parameters.clientId, connecteEncryptService: self.encryptService)
+            let body = try TonConnectServiceBodyBuilder.buildCancelBody(keypair: keyPair, id: self.last_event_id ?? "", clientId: parameters.clientId, connecteEncryptService: self.encryptService)
             sendBody(body: body) { response in
                 success(true)
             } failure: { error in
@@ -181,19 +181,19 @@ extension TonConnect {
         }
     }
     
-//    public func sendTransaction(seqno: UInt64, parameters: TonConnectDappRequest.TonConnectParam) {
-//        do {
-//            let sender = try ConnectAddress.parse(address)
-//            let body = try TonConnectServiceBodyBuilder.buildSendTransactionBody(keypair: keyPair, seqno: seqno, sender: sender, parameters: parameters, contract: contract)
-////            sendBody(body: body).done { response in
-////                //                seal.fulfill(response)
-////            }.catch { error in
-////                //                seal.reject(error)
-////            }
-//        } catch let error {
-//            
-//        }
-//    }
+    public func confirmRequest(boc:String, success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) {
+        do {
+            let body = try TonConnectServiceBodyBuilder.buildCancelBody(keypair: keyPair, id: self.last_event_id ?? "", clientId: parameters.clientId, connecteEncryptService: self.encryptService)
+            sendBody(body: body) { response in
+                success(true)
+            } failure: { error in
+                failure(error)
+            }
+        } catch let error {
+            failure(TonError.otherError(error.localizedDescription))
+        }
+    }
+    
 }
 
 public struct SSEResopnse: Decodable {

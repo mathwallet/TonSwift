@@ -46,7 +46,7 @@ public struct  TonConnectConnectBodyBuilder {
         return encrypted
     }
     
-    static func buildDisConnectBody(id: String,
+    static func buildCancelRequestBody(id: String,
                                     clientId: String,
                                     connecteEncryptService: TonConnectEncryptService) throws -> String {
         let response = SendTransactionResponse.error(
@@ -54,6 +54,23 @@ public struct  TonConnectConnectBodyBuilder {
                   error: .init(code: .userDeclinedTransaction,
                                message: "")
                  )
+        )
+        let responseData = try JSONEncoder().encode(response)
+        let receiverPublicKey = Data(hex: clientId)
+        let encryptedResponse = try connecteEncryptService.encrypt(
+            message: responseData,
+            receiverPublicKey: receiverPublicKey
+        )
+        return encryptedResponse.base64EncodedString()
+    }
+    
+    static func buildConfirmRequestBody(id: String,
+                                        boc: String,
+                                    clientId: String,
+                                    connecteEncryptService: TonConnectEncryptService) throws -> String {
+        let response = SendTransactionResponse.success(
+            .init(result: boc,
+                  id: id)
         )
         let responseData = try JSONEncoder().encode(response)
         let receiverPublicKey = Data(hex: clientId)

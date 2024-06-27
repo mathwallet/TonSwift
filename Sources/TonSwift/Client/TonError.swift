@@ -13,6 +13,7 @@ public enum TonError: LocalizedError {
     case otherError(String)
     case resoultError(String, String)
     case unknow
+    case cancle
     
     public var errorDescription: String? {
         switch self {
@@ -26,6 +27,8 @@ public enum TonError: LocalizedError {
             return message
         case .unknow:
             return "unknow"
+        case .cancle:
+            return "cancle"
         }
     }
 }
