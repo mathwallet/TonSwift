@@ -13,7 +13,7 @@ public struct TonConnectDappRequest: Decodable {
         case disconnect
     }
     
-    public struct TonConnectParam: Decodable {
+    public struct TonConnectParam: Codable {
         let messages: [TonConnectMessage]
         let validUntil: TimeInterval
         let from: ConnectAddress?
@@ -30,9 +30,16 @@ public struct TonConnectDappRequest: Decodable {
             validUntil = try container.decode(TimeInterval.self, forKey: .validUntil)
             from = try ConnectAddress.parse(try container.decode(String.self, forKey: .from))
         }
+        
+        public func encode(to encoder: any Encoder) throws {
+            var encoder =  encoder.container(keyedBy: CodingKeys.self)
+            try encoder.encode(messages, forKey: .messages)
+            try encoder.encode(validUntil, forKey: .validUntil)
+            try encoder.encode(from, forKey: .from)
+        }
     }
     
-    public struct TonConnectMessage: Decodable {
+    public struct TonConnectMessage: Codable {
         let address: ConnectAddress
         let amount: Int64
         let stateInit: String?
@@ -51,6 +58,14 @@ public struct TonConnectDappRequest: Decodable {
             amount = Int64(try container.decode(String.self, forKey: .amount)) ?? 0
             stateInit = try container.decodeIfPresent(String.self, forKey: .stateInit)
             payload = try container.decodeIfPresent(String.self, forKey: .payload)
+        }
+        
+        public func encode(to encoder: any Encoder) throws {
+            var encoder =  encoder.container(keyedBy: CodingKeys.self)
+            try encoder.encode(address, forKey: .address)
+            try encoder.encode(amount, forKey: .amount)
+            try encoder.encode(stateInit, forKey: .stateInit)
+            try encoder.encode(payload, forKey: .payload)
         }
     }
     
