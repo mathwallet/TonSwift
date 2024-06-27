@@ -181,7 +181,7 @@ extension TonConnect {
         }
     }
     
-    public func confirmRequest(boc:String, success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) {
+    public func confirmRequest(boc: String, success: @escaping (_ result: Bool) -> Void, failure: @escaping (_ error: TonError) -> Void) {
         do {
             let body = try TonConnectServiceBodyBuilder.buildCancelBody(keypair: keyPair, id: self.last_event_id ?? "", clientId: parameters.clientId, connecteEncryptService: self.encryptService)
             sendBody(body: body) { response in

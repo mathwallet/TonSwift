@@ -100,8 +100,8 @@ final class TonSwiftTests: XCTestCase {
             DispatchQueue.global().async {
                 do {
                     let connect = TonConnect(parameters: par, keyPair: keypair, address: try wallet.create().getAddress().toString(isUserFriendly: false))
-                    connect.connect { result in
-                        let body = try! TonConnectServiceBodyBuilder.buildSendTransactionBody(keypair: keypair, seqno: UInt64(1111), sender: try! ConnectAddress.parse(address), parameters: result.params.first!, contract: contract)
+                    connect.connect { isConnect,result  in
+                        let body = try! TonConnectServiceBodyBuilder.buildSendTransactionBody(keypair: keypair, seqno: UInt64(1111), sender: try! ConnectAddress.parse(address), parameters: result!.params.first!, contract: contract)
                         debugPrint(body)
                     } failure: { error in
                         
