@@ -2,7 +2,7 @@
 //  TonConnectUrlParser.swift
 //
 //
-//  Created by 薛跃杰 on 2024/6/4.
+//  Created by xgblin on 2024/6/4.
 //
 
 import Foundation
