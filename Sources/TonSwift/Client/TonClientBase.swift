@@ -160,7 +160,7 @@ public class TonClientBase {
 }
 
 extension TonClientBase {
-    public func GET<T: Codable>(urlString: String, parameters: [String: Any]? = nil) -> Promise<T> {
+    public func GET<T: Codable>(urlString: String, parameters: [String: Any]? = nil, headers: [String: String] = [:]) -> Promise<T> {
         let rp = Promise<Data>.pending()
         var task: URLSessionTask? = nil
         let queue = DispatchQueue(label: "ton.get")
@@ -180,6 +180,9 @@ extension TonClientBase {
             //            debugPrint("GET \(url)")
             var urlRequest = URLRequest(url: getUrl, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
             urlRequest.httpMethod = "GET"
+            for key in headers.keys {
+                urlRequest.setValue(headers[key], forHTTPHeaderField: key)
+            }
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             
@@ -220,7 +223,7 @@ extension TonClientBase {
         let queue = DispatchQueue(label: "ton.post")
         queue.async {
             do {
-                guard var postUrl = URL(string: urlString) else {
+                guard let postUrl = URL(string: urlString) else {
                     rp.resolver.reject(TonError.providerError("url error"))
                     return
                 }
@@ -265,7 +268,6 @@ extension TonClientBase {
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             do {
-                let result = try decoder.decode(T.self, from: data)
                 guard let result = try? decoder.decode(T.self, from: data) else {
                     throw TonError.unknow
                 }
