@@ -96,7 +96,7 @@ extension TonClient {
     }
     
     public func getJettonWalletBalance(jettonAddress: String) -> Promise<String> {
-        return Promise{ seal in
+        return Promise { seal in
             getJettonWalletData(address: jettonAddress).done { (result: RunGetRunMethodResult) in
                 if let num = result.num {
                     seal.fulfill(String(num))
@@ -107,5 +107,26 @@ extension TonClient {
                 seal.reject(error)
             }
         }
+    }
+    
+    public func getJettonTokenData(mintAddress: String) -> Promise<TokenResult> {
+        return Promise { seal in
+            var tokenResult = TokenResult()
+            GET(path: "/api/v2/getTokenData",parameters: ["address": mintAddress]).then { (result: JettonsTokenResult) in
+                tokenResult.decimals = result.jettonContent.data.decimals
+                return self.getJettonContentData(path: result.jettonContent.data.uri)
+            }.done { (result: TokenResult) in
+                tokenResult.name = result.name
+                tokenResult.symbol = result.symbol
+                tokenResult.image = result.image
+                seal.fulfill(tokenResult)
+            }.catch { error in
+                seal.reject(error)
+            }
+        }
+    }
+    
+    private func getJettonContentData(path: String) -> Promise<TokenResult> {
+        return GET(urlString: path)
     }
 }

@@ -158,3 +158,123 @@ public class TonClientBase {
         }
     }
 }
+
+extension TonClientBase {
+    public func GET<T: Codable>(urlString: String, parameters: [String: Any]? = nil, headers: [String: String] = [:]) -> Promise<T> {
+        let rp = Promise<Data>.pending()
+        var task: URLSessionTask? = nil
+        let queue = DispatchQueue(label: "ton.get")
+        queue.async {
+            guard var getUrl = URL(string: urlString) else {
+                rp.resolver.reject(TonError.providerError("url error"))
+                return
+            }
+            if let p = parameters, !p.isEmpty {
+                var urlComponents = URLComponents(url: getUrl, resolvingAgainstBaseURL: true)!
+                var items = urlComponents.queryItems ?? []
+                items += p.map({ URLQueryItem(name: $0, value: "\($1)") })
+                urlComponents.queryItems = items
+                getUrl = urlComponents.url!
+            }
+            
+            //            debugPrint("GET \(url)")
+            var urlRequest = URLRequest(url: getUrl, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
+            urlRequest.httpMethod = "GET"
+            for key in headers.keys {
+                urlRequest.setValue(headers[key], forHTTPHeaderField: key)
+            }
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+            
+            task = self.session.dataTask(with: urlRequest){ (data, response, error) in
+                guard error == nil else {
+                    rp.resolver.reject(error!)
+                    return
+                }
+                guard data != nil else {
+                    rp.resolver.reject(TonError.providerError("Node response is empty"))
+                    return
+                }
+                rp.resolver.fulfill(data!)
+            }
+            task?.resume()
+        }
+        return rp.promise.ensure(on: queue) {
+            task = nil
+        }.map(on: queue){ (data: Data) throws -> T in
+            //            debugPrint(String(data: data, encoding: .utf8) ?? "")
+            
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            do {
+                guard let result = try? decoder.decode(T.self, from: data) else {
+                    throw TonError.unknow
+                }
+                return result
+            } catch {
+                throw TonError.providerError("Parameter error or received wrong message")
+            }
+        }
+    }
+    
+    public func POST<T: Codable>(urlString: String, parameters: [String : Any]? = nil, headers: [String: String] = [:]) -> Promise<T> {
+        let rp = Promise<Data>.pending()
+        var task: URLSessionTask? = nil
+        let queue = DispatchQueue(label: "ton.post")
+        queue.async {
+            do {
+                guard let postUrl = URL(string: urlString) else {
+                    rp.resolver.reject(TonError.providerError("url error"))
+                    return
+                }
+                var urlRequest = URLRequest(url: postUrl, cachePolicy: URLRequest.CachePolicy.reloadIgnoringCacheData)
+                urlRequest.httpMethod = "POST"
+                
+                for key in headers.keys {
+                    urlRequest.setValue(headers[key], forHTTPHeaderField: key)
+                }
+                if !headers.keys.contains("Content-Type") {
+                    urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                }
+                if !headers.keys.contains("Accept") {
+                    urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+                }
+                if let p = parameters {
+                    urlRequest.httpBody = try JSONSerialization.data(withJSONObject: p)
+                    //debugPrint(p)
+                }
+                //            debugPrint(body?.toHexString() ?? "")
+                
+                task = self.session.dataTask(with: urlRequest){ (data, response, error) in
+                    guard error == nil else {
+                        rp.resolver.reject(error!)
+                        return
+                    }
+                    guard data != nil else {
+                        rp.resolver.reject(TonError.providerError("Node response is empty"))
+                        return
+                    }
+                    rp.resolver.fulfill(data!)
+                }
+                task?.resume()
+            } catch {
+                rp.resolver.reject(error)
+            }
+        }
+        
+        return rp.promise.ensure(on: queue) {
+            task = nil
+        }.map(on: queue) { (data: Data) throws -> T in
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            do {
+                guard let result = try? decoder.decode(T.self, from: data) else {
+                    throw TonError.unknow
+                }
+                return result
+            } catch let error {
+                throw error
+            }
+        }
+    }
+}

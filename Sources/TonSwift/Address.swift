@@ -30,6 +30,15 @@ public class Address {
         isUrlSafe = false
     }
     
+    public init(wc: UInt8, hashPart: Data) {
+        self.wc = wc
+        self.hashPart = hashPart
+        self.isTestOnly = false
+        self.isUserFriendly = false
+        self.isBounceable = false
+        self.isUrlSafe = false
+    }
+    
     public init?(addressStr: String) {
         if (addressStr.isEmpty) {
             return nil
@@ -226,3 +235,21 @@ public class Address {
     }
 }
 
+// MARK: - Hashable
+extension Address: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(wc)
+        hasher.combine(hashPart)
+    }
+}
+
+// MARK: - Equatable
+extension Address: Equatable {
+    public static func == (lhs: Address, rhs: Address) -> Bool {
+        if lhs.wc != rhs.wc || lhs.isBounceable != rhs.isBounceable || lhs.isTestOnly != rhs.isTestOnly || lhs.isUrlSafe != rhs.isUrlSafe || lhs.isUserFriendly != rhs.isUserFriendly {
+            return false
+        }
+        
+        return lhs.hashPart == rhs.hashPart
+    }
+}

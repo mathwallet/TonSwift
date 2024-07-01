@@ -164,6 +164,16 @@ public class CellBuilder: Cell {
 //        refs.addAll(Arrays.asList(cells));
 //        return this;
 //    }
+    
+    public func storeMaybe(ref cell: Cell?) throws -> CellBuilder {
+        if let cell = cell {
+            let _ = try storeBit(bit: true)
+            let _ = try storeRef(c: cell)
+        } else {
+            let _ = try storeBit(bit: false)
+        }
+        return self
+    }
 
     public func storeSlice(cellSlice: CellSlice) throws -> CellBuilder {
         try checkBitsOverflow(length: cellSlice.bits.getUsedBits())
