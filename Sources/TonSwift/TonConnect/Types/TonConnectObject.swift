@@ -45,8 +45,8 @@ public struct ConnectEventError: Encodable {
 
 public struct DeviceInfo: Encodable {
     let platform = "iphone"
-    let appName = "Tonkeeper"
-    let appVersion = "3.4.0"
+    let appName = "MathWallet"
+    let appVersion = "5.3.5"
     let maxProtocolVersion = 2
     let features = [Feature()]
     
