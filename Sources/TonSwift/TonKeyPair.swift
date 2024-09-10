@@ -26,7 +26,7 @@ public struct TonKeypair {
     }
     
     public init(mnemonics: String) throws {
-        guard let mnemonicSeed = Mnemonics.seedFromMmemonics(mnemonics, saltString: "TON default seed") else {
+        guard let mnemonicSeed = Mnemonics.seedFromMmemonics(mnemonics) else {
             throw Error.invalidMnemonic
         }
         try self.init(seed: mnemonicSeed)
@@ -34,10 +34,8 @@ public struct TonKeypair {
     }
     
     public static func randomKeyPair() throws -> TonKeypair {
-        guard let mnemonic = try? BIP39.generateMnemonics(bitsOfEntropy: 256) else{
-            throw TonKeypair.Error.invalidMnemonic
-        }
-        return try TonKeypair(mnemonics: mnemonic)
+        let mnemonics = Mnemonics.generate()
+        return try TonKeypair(mnemonics: mnemonics)
     }
 }
 

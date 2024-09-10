@@ -29,13 +29,13 @@ public struct Mnemonics {
     // Default salt used to check, if mnemonic phrase requires a password
     static let DEFAULT_PASSWORD_SALT = "TON fast seed version"
     
-    public static func generate(wordsCount: Int = 24, password: String) -> String {
+    public static func generate(wordsCount: Int = 24, password: String = "", language: BIP39Language = BIP39Language.english) -> String {
         var mnemonicArray: [String] = []
         while true {
             mnemonicArray = []
             let rnd = [Int](repeating: 0, count: wordsCount).map({ _ in Int.random(in: 0..<Int.max) })
             for i in 0..<wordsCount {
-                mnemonicArray.append(BIP39Language.english.words[rnd[i] % (BIP39Language.english.words.count - 1)])
+                mnemonicArray.append(language.words[rnd[i] % (language.words.count - 1)])
             }
             let mnemonic =  mnemonicArray.joined(separator: " ")
             
@@ -45,7 +45,7 @@ public struct Mnemonics {
                 }
             }
             
-            if !isBasicSeed(entropy: toEntropy(mnemonics: mnemonic, key: password)) {
+            if !isBasicSeed(entropy: mmemonicsToEntropy(mnemonic, key: password)) {
                 continue
             }
             
@@ -54,14 +54,14 @@ public struct Mnemonics {
         return mnemonicArray.joined(separator: " ")
     }
     
-    public static func isValid(_ mnemonics: String, password: String) -> Bool {
+    public static func isValid(_ mnemonics: String, password: String = "", language: BIP39Language = BIP39Language.english) -> Bool {
         let mnemonicArr = mnemonics.components(separatedBy: " ")
         for word in mnemonicArr {
-            if !BIP39Language.english.words.contains(word) {
+            if !language.words.contains(word) {
                 return false
             }
         }
-        let entropy = toEntropy(mnemonics: mnemonics, key: password)
+        let entropy = mmemonicsToEntropy(mnemonics, key: password)
         return isBasicSeed(entropy: entropy)
     }
     
@@ -71,14 +71,14 @@ public struct Mnemonics {
         return seed[0] == 0
     }
     
-    static public func seedFromMmemonics(_ mnemonics: String, saltString: String, password: String = "", language: BIP39Language = BIP39Language.english) -> Data? {
-        let entropy = toEntropy(mnemonics: mnemonics, key: "")
+    static public func seedFromMmemonics(_ mnemonics: String, password: String = "") -> Data? {
+        let entropy = mmemonicsToEntropy(mnemonics, key: "")
         let saltData = DEFAULT_SALT.data(using: .utf8)!
         return Data(pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: DEFAULT_ITERATIONS))
     }
     
     public static func isPasswordNeeded(mnemonic: String) -> Bool {
-        let entropy = toEntropy(mnemonics: mnemonic,key:"")
+        let entropy = mmemonicsToEntropy(mnemonic, key: "")
         return isPasswordSeed(entropy: entropy) && !isBasicSeed(entropy: entropy)
     }
     
@@ -88,7 +88,7 @@ public struct Mnemonics {
         return seed[0] == 1
     }
     
-    static public func toEntropy(mnemonics: String, key: String) -> Data {
+    static public func mmemonicsToEntropy(_ mnemonics: String, key: String) -> Data {
         return hmacSha512(phrase: mnemonics, password: key)
     }
 
