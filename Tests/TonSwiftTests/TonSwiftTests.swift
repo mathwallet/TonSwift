@@ -10,12 +10,12 @@ final class TonSwiftTests: XCTestCase {
     }
     
     func testKeypairExample() throws {
-        let keypair = try TonKeypair(seed: Data(hex: "d2a351c1dcb250fd5380eb4ce3e1d2594c575398fa8d0dadc3987346d5ba453e"))
+        let keypair = try TonKeypair(mnemonics: "hurry client bike finish produce track present similar excuse heart toast unusual guard praise copy left ski giggle online hurdle yard mountain pony mutual")
         let contract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey, wc: Int64(0))).create()
         print(keypair.publicKey.toHexString())
         print(keypair.secretKey.toHexString())
         print(try! contract.createStateInit().stateInit.toBocBase64())
-        print(try! contract.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: true))
+        print(try! contract.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false))
     }
     
     func testClickExample() throws {

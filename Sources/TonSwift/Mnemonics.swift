@@ -12,7 +12,24 @@ import CommonCrypto
 
 public struct Mnemonics {
     
-    public static func generate(wordsCount: Int, password: String) -> String {
+    static let DEFAULT_ITERATIONS = 100000
+    
+    // Default salt for PBKDF2 used to generate seed
+    static let DEFAULT_SALT = "TON default seed"
+    
+    // Number of PBKDF2 iterations used to check, if mnemonic phrase is valid
+    static let DEFAULT_BASIC_ITERATIONS = 390
+    
+    // Default salt used to check mnemonic phrase validity
+    static let DEFAULT_BASIC_SALT = "TON seed version"
+    
+    // Number of PBKDF2 iterations used to check, if mnemonic phrase requires a password
+    static let DEFAULT_PASSWORD_ITERATIONS = 1
+    
+    // Default salt used to check, if mnemonic phrase requires a password
+    static let DEFAULT_PASSWORD_SALT = "TON fast seed version"
+    
+    public static func generate(wordsCount: Int = 24, password: String) -> String {
         var mnemonicArray: [String] = []
         while true {
             mnemonicArray = []
@@ -39,7 +56,6 @@ public struct Mnemonics {
     
     public static func isValid(_ mnemonics: String, password: String) -> Bool {
         let mnemonicArr = mnemonics.components(separatedBy: " ")
-        guard mnemonicArr.count <= 24 else {return false}
         for word in mnemonicArr {
             if !BIP39Language.english.words.contains(word) {
                 return false
@@ -50,15 +66,15 @@ public struct Mnemonics {
     }
     
     public static func isBasicSeed(entropy: Data) -> Bool {
-        let saltData = "TON seed version".data(using: .utf8)!
-        let seed = pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: max(1, 100000 / 256))
+        let saltData = DEFAULT_BASIC_SALT.data(using: .utf8)!
+        let seed = pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: DEFAULT_BASIC_ITERATIONS)
         return seed[0] == 0
     }
     
     static public func seedFromMmemonics(_ mnemonics: String, saltString: String, password: String = "", language: BIP39Language = BIP39Language.english) -> Data? {
         let entropy = toEntropy(mnemonics: mnemonics, key: "")
-        let saltData = "TON default seed".data(using: .utf8)!
-        return Data(pbkdf2Sha512(phrase: entropy, salt: saltData))
+        let saltData = DEFAULT_SALT.data(using: .utf8)!
+        return Data(pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: DEFAULT_ITERATIONS))
     }
     
     public static func isPasswordNeeded(mnemonic: String) -> Bool {
@@ -67,8 +83,8 @@ public struct Mnemonics {
     }
     
     public static func isPasswordSeed(entropy: Data) -> Bool {
-        let saltData = "TON default seed".data(using: .utf8)!
-        let seed = pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: 1)
+        let saltData = DEFAULT_PASSWORD_SALT.data(using: .utf8)!
+        let seed = pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: DEFAULT_PASSWORD_ITERATIONS)
         return seed[0] == 1
     }
     
@@ -76,7 +92,7 @@ public struct Mnemonics {
         return hmacSha512(phrase: mnemonics, password: key)
     }
 
-    public static func pbkdf2Sha512(phrase: Data, salt: Data, iterations: Int = 100000, keyLength: Int = 64) -> [UInt8] {
+    public static func pbkdf2Sha512(phrase: Data, salt: Data, iterations: Int, keyLength: Int = 64) -> [UInt8] {
         var bytes = [UInt8](repeating: 0, count: keyLength)
         
         _ = bytes.withUnsafeMutableBytes { (outputBytes: UnsafeMutableRawBufferPointer) in
