@@ -40,12 +40,12 @@ public struct Mnemonics {
             let mnemonic =  mnemonicArray.joined(separator: " ")
             
             if password.count > 0 {
-                if !isPasswordNeeded(mnemonic: mnemonic) {
+                if !isPasswordNeeded(mnemonic: mnemonic, password: password) {
                     continue
                 }
             }
             
-            if !isBasicSeed(entropy: mmemonicsToEntropy(mnemonic, key: password)) {
+            if !isBasicSeed(entropy: mmemonicsToEntropy(mnemonic, password: password)) {
                 continue
             }
             
@@ -61,7 +61,7 @@ public struct Mnemonics {
                 return false
             }
         }
-        let entropy = mmemonicsToEntropy(mnemonics, key: password)
+        let entropy = mmemonicsToEntropy(mnemonics, password: password)
         return isBasicSeed(entropy: entropy)
     }
     
@@ -72,13 +72,13 @@ public struct Mnemonics {
     }
     
     static public func seedFromMmemonics(_ mnemonics: String, password: String = "") -> Data? {
-        let entropy = mmemonicsToEntropy(mnemonics, key: "")
+        let entropy = mmemonicsToEntropy(mnemonics, password: password)
         let saltData = DEFAULT_SALT.data(using: .utf8)!
         return Data(pbkdf2Sha512(phrase: entropy, salt: saltData, iterations: DEFAULT_ITERATIONS))
     }
     
-    public static func isPasswordNeeded(mnemonic: String) -> Bool {
-        let entropy = mmemonicsToEntropy(mnemonic, key: "")
+    public static func isPasswordNeeded(mnemonic: String, password: String = "") -> Bool {
+        let entropy = mmemonicsToEntropy(mnemonic, password: password)
         return isPasswordSeed(entropy: entropy) && !isBasicSeed(entropy: entropy)
     }
     
@@ -88,8 +88,8 @@ public struct Mnemonics {
         return seed[0] == 1
     }
     
-    static public func mmemonicsToEntropy(_ mnemonics: String, key: String) -> Data {
-        return hmacSha512(phrase: mnemonics, password: key)
+    static public func mmemonicsToEntropy(_ mnemonics: String, password: String) -> Data {
+        return hmacSha512(phrase: mnemonics, password: password)
     }
 
     public static func pbkdf2Sha512(phrase: Data, salt: Data, iterations: Int, keyLength: Int = 64) -> [UInt8] {
