@@ -18,6 +18,12 @@ final class TonSwiftTests: XCTestCase {
         print(try! contract.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false))
     }
     
+    func testBip39KeypairExample() throws {
+        let keypair = try TonKeypair(mnemonics: "arrest salad layer vessel milk record tone cereal physical accident brave vanish", path: "m/44'/607'/0'")
+        let contract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey, wc: Int64(0))).create()
+        XCTAssertTrue("UQAWguGRJyDl1pX-m2cfrtTDoAiWV47M78vWGVPX7stXPDju" == (try! contract.getAddress().toString(isUserFriendly: true, isUrlSafe: true, isBounceable: false)))
+    }
+    
     func testClickExample() throws {
         let reqeustExpectation = expectation(description: "Tests")
         DispatchQueue.global().async {

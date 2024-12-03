@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import BIP39swift
 import TweetNacl
-
+import web3swift
 public struct TonKeypair {
     public var secretKey: Data
     public var publicKey: Data
@@ -25,11 +24,20 @@ public struct TonKeypair {
         try self.init(secretKey: secretKey)
     }
     
-    public init(mnemonics: String) throws {
-        guard let mnemonicSeed = Mnemonics.seedFromMmemonics(mnemonics) else {
-            throw Error.invalidMnemonic
+    public init(mnemonics: String, path: String? = nil) throws {
+        if let _path = path {
+            guard let entropy = BIP39.mnemonicsToEntropy(mnemonics, language: .english),
+                  let mnemonicSeed = BIP39.seedFromEntropy(entropy) else {
+                throw Error.invalidMnemonic
+            }
+            let (seed, _) = NaclSign.KeyPair.deriveKey(path: _path, seed: mnemonicSeed)
+            try self.init(seed: seed)
+        } else {
+            guard let mnemonicSeed = Mnemonics.seedFromMmemonics(mnemonics) else {
+                throw Error.invalidMnemonic
+            }
+            try self.init(seed: mnemonicSeed)
         }
-        try self.init(seed: mnemonicSeed)
         self.mnemonics = mnemonics
     }
     
