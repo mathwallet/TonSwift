@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "TonSwift",
+    platforms: [
+        .macOS(.v10_15), .iOS(.v13)
+    ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -16,6 +19,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "TweetNacl", url: "https://github.com/lishuailibertine/tweetnacl-swiftwrap", from: "1.0.5"),
         .package(name:"BIP39swift", url: "https://github.com/mathwallet/BIP39swift", from: "1.0.1"),
+        .package(url: "https://github.com/lishuailibertine/web3swift", from: "1.0.0"),
         .package(url: "https://github.com/mxcl/PromiseKit.git", .upToNextMajor(from: "8.1.1")),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0"),
         .package(url: "https://github.com/Flight-School/AnyCodable.git", .exact("0.6.1")),
@@ -31,7 +35,8 @@ let package = Package(
                            "PromiseKit",
                            "BigInt",
                            "AnyCodable",
-                           "Alamofire"
+                           "Alamofire",
+                           "web3swift"
                           ]),
         .testTarget(
             name: "TonSwiftTests",
