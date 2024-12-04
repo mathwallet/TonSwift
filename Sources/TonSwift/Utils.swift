@@ -89,6 +89,13 @@ public struct Utils {
         return a.elementsEqual(b)
     }
     
+    public static func getQueryId() throws -> UInt64 {
+        let crc32Tonkeeper: UInt32 = 0x546de4ef
+        let randomBytes = UInt32.random(in: UInt32.min...UInt32.max)
+        let queryId: UInt64 = (UInt64(crc32Tonkeeper) << 32) | UInt64(randomBytes)
+        return queryId
+    }
+    
     public static func signData(prvKey: Data, data: Data) throws -> Data {
          var signature = Data()
          if (prvKey.count == 64) {
