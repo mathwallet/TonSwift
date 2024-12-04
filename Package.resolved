@@ -20,15 +20,6 @@
         }
       },
       {
-        "package": "Base58Swift",
-        "repositoryURL": "https://github.com/mathwallet/Base58Swift.git",
-        "state": {
-          "branch": null,
-          "revision": "04ccae070ac6f3117db11af864a04229f7c1e025",
-          "version": "0.0.1"
-        }
-      },
-      {
         "package": "BigInt",
         "repositoryURL": "https://github.com/attaswift/BigInt.git",
         "state": {
@@ -65,39 +56,12 @@
         }
       },
       {
-        "package": "RIPEMDSwift",
-        "repositoryURL": "https://github.com/mathwallet/RIPEMDSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "1a9b1487d1880585c8cc46e26b6d9838184f7858",
-          "version": "0.0.1"
-        }
-      },
-      {
-        "package": "Secp256k1Swift",
-        "repositoryURL": "https://github.com/mathwallet/Secp256k1Swift.git",
-        "state": {
-          "branch": null,
-          "revision": "3eac0ee49d57eaf0d91d54df876194cdd0c971fe",
-          "version": "2.0.0"
-        }
-      },
-      {
         "package": "TweetNacl",
         "repositoryURL": "https://github.com/lishuailibertine/tweetnacl-swiftwrap",
         "state": {
           "branch": null,
           "revision": "80afe3695c4613517c2b5d04b5d3ae41bda33647",
           "version": "1.0.5"
-        }
-      },
-      {
-        "package": "Web3swift",
-        "repositoryURL": "https://github.com/lishuailibertine/web3swift",
-        "state": {
-          "branch": null,
-          "revision": "7063ca4b7151f7b4448de96740a8ae98fd60a70b",
-          "version": "1.0.0"
         }
       }
     ]
