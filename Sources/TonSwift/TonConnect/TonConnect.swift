@@ -210,7 +210,7 @@ public struct SSEResopnseData: Decodable {
 public struct ManifestResult: Decodable {
     public let url: String
     public let name: String
-    public let iconUrl: String
-    public let termsOfUseUrl: String
-    public let privacyPolicyUrl: String
+    public let iconUrl: String?
+    public let termsOfUseUrl: String?
+    public let privacyPolicyUrl: String?
 }
