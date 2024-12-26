@@ -7,7 +7,6 @@
 
 import Foundation
 import TweetNacl
-//import web3swift
 import BIP39swift
 public struct TonKeypair {
     public var secretKey: Data
