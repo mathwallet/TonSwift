@@ -282,7 +282,7 @@ public class BitString {
      * @param value String
      */
     public func writeString(value: String) throws {
-        try writeBytes(ui8s: value.data(using: .utf8)!.bytes)
+        try writeBytes(ui8s: value.data(using: .utf8)!.byteArray)
     }
 
     /**
@@ -320,7 +320,7 @@ public class BitString {
             try writeUInt(number: BigInt(2), bitLength: 2)
             try writeUInt(number: BigInt.zero, bitLength: 1);
             try writeInt(number: BigInt(_address.wc), bitLength: 8)
-            try writeBytes(ui8s: _address.hashPart.bytes)
+            try writeBytes(ui8s: _address.hashPart.byteArray)
         } else {
             try writeUInt(number: BigInt(0), bitLength: 2)
         }

@@ -51,7 +51,7 @@ public struct Utils {
     }
     
     public static func getCRC32ChecksumAsBytesReversed(data: Data) -> Data {
-        let crc32c = Checksum.crc32c(data.bytes)
+        let crc32c = Checksum.crc32c(data.byteArray)
         let intCrcBytes = withUnsafeBytes(of: crc32c.bigEndian, Array.init)
         return Data(intCrcBytes.reversed())
     }
@@ -59,7 +59,7 @@ public struct Utils {
     public static func getCRC16ChecksumAsInt(data: Data) -> Int {
         var crc: Int = 0x0000;
         let polynomial: Int = 0x1021;
-        for b in data.bytes {
+        for b in data.byteArray {
             for i in 0..<8 {
                 let bit = ((b >> (7 - i) & 1) == 1)
                 let c15 = ((crc >> 15 & 1) == 1)

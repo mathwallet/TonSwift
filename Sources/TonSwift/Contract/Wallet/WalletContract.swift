@@ -23,7 +23,7 @@ public class WalletContract : Contract {
     public override func createDataCell() throws -> Cell {
         let cell = CellBuilder.beginCell()
         let _ = try cell.storeUint(number: BigInt.zero, bitLength: 32) // seqno
-        let _ = try cell.storeBytes(bytes: self.getOptions()!.publicKey!.bytes)
+        let _ = try cell.storeBytes(bytes: self.getOptions()!.publicKey!.byteArray)
         return cell
     }
     
@@ -54,7 +54,7 @@ public class WalletContract : Contract {
         let signature = try TweetNacl.NaclSign.signDetached(message: try signingMessage.hash(), secretKey: secretKey)
         
         let body = CellBuilder.beginCell()
-        let _ = try body.storeBytes(bytes: signature.bytes)
+        let _ = try body.storeBytes(bytes: signature.byteArray)
         try body.writeCell(anotherCell: signingMessage)
         
         let header = try Contract.createExternalMessageHeader(dest: stateInit.address)
@@ -242,7 +242,7 @@ public class WalletContract : Contract {
                                                  sendMode: UInt8 = UInt8(3),
                                                  dummySignature: Bool = false,
                                                  stateInit: Cell? = nil) throws ->ExternalMessage {
-        let payloadCell = try CellBuilder.beginCell().storeBytes(bytes: payload.bytes).endCell
+        let payloadCell = try CellBuilder.beginCell().storeBytes(bytes: payload.byteArray).endCell
         
         return try createSignedTransferMessagePayloadCell(secretKey: secretKey, address: address, amount: amount, seqno: seqno, payload: payloadCell, sendMode: sendMode, dummySignature: dummySignature, stateInit: stateInit)
     }

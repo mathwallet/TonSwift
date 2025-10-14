@@ -195,7 +195,7 @@ public class Address {
         let addr = Array<UInt8>(base64Bytes[0..<34])
         let crc = Array<UInt8>(base64Bytes[34..<36])
 
-        let calculatedCrc16 = Utils.getCRC16ChecksumAsBytes(data: Data(addr)).bytes
+        let calculatedCrc16 = Utils.getCRC16ChecksumAsBytes(data: Data(addr)).byteArray
         if (!(calculatedCrc16[0] == crc[0] && calculatedCrc16[1] == crc[1])) {
             return nil
         }

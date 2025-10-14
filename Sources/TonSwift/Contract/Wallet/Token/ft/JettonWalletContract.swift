@@ -64,7 +64,7 @@ public class JettonWalletContract : Contract {
         let _ = try cell.storeCoins(coins: forwardAmount)
         let _ = try cell.storeBit(bit: false)
         if (forwardPayload.count != 0) {
-            let _ =  try cell.bits.writeBytes(ui8s: forwardPayload.bytes)
+            let _ =  try cell.bits.writeBytes(ui8s: forwardPayload.byteArray)
         }
         if message.count > 0 {
             let _ = try cell.storeUint(number: BigInt.zero, bitLength: 32)

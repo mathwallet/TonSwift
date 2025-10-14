@@ -3,12 +3,6 @@ import BigInt
 @testable import TonSwift
 
 final class TonSwiftTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-    }
-    
     func testKeypairExample() throws {
         let keypair = try TonKeypair(mnemonics: "hurry client bike finish produce track present similar excuse heart toast unusual guard praise copy left ski giggle online hurdle yard mountain pony mutual")
         let contract = try TonWallet(walletVersion: WalletVersion.v4R2, options: Options(publicKey: keypair.publicKey, wc: Int64(0))).create()

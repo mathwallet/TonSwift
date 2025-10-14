@@ -11,13 +11,13 @@ struct ADNLAddress {
             throw TonError.otherError("Invalid address")
         }
 
-        let gotHash = decoded[33...].bytes
-        let hash = Data(decoded[0..<33].bytes).crc16Data()
-        if !hash.bytes.elementsEqual(gotHash) {
+        let gotHash = decoded[33...].byteArray
+        let hash = Data(decoded[0..<33].byteArray).crc16Data()
+        if !hash.byteArray.elementsEqual(gotHash) {
             throw TonError.otherError("Invalid address")
         }
 
-        return try ADNLAddress(address: Data(decoded[1..<33].bytes))
+        return try ADNLAddress(address: Data(decoded[1..<33].byteArray))
     }
 
     static func parseRaw(_ src: String) throws -> ADNLAddress {

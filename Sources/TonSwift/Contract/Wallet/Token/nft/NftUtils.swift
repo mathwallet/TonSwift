@@ -26,7 +26,7 @@ public struct NftUtils {
     public static func createOffchainUriCell(uri: String) throws -> Cell {
         let cell = CellBuilder.beginCell()
         let _ = try cell.storeUint(number: OFFCHAIN_CONTENT_PREFIX, bitLength: 8)
-        let _ = try cell.storeBytes(bytes: uri.data(using: .utf8)!.bytes)
+        let _ = try cell.storeBytes(bytes: uri.data(using: .utf8)!.byteArray)
         return cell.endCell
     }
 
@@ -69,7 +69,7 @@ public struct NftUtils {
     public static func createOnchainDataCell(name: String, description: String) throws -> Cell {
         let cell = CellBuilder.beginCell()
         let _ = try cell.storeUint(number: ONCHAIN_CONTENT_PREFIX, bitLength: 8)
-        let _ = try cell.storeBytes(bytes: name.data(using: .utf8)!.bytes)
+        let _ = try cell.storeBytes(bytes: name.data(using: .utf8)!.byteArray)
         let _ = try cell.storeString(str: description)
         return cell.endCell
     }

@@ -78,7 +78,7 @@ extension TonClient {
         return Promise{ seal in
             let cell = CellBuilder.beginCell()
             let _ = try cell.bits.writeAddress(address: Address(addressStr: ownerAddress))
-            let base64 = try cell.toBoc(hasIdx: false).bytes.toBase64()
+            let base64 = try cell.toBoc(hasIdx: false).byteArray.toBase64()
             runGetMethod(address: mintAddress, method: "get_wallet_address", params: [["tvm.Slice", base64]]).done { (result: RunGetRunMethodResult) in
                 if result.exitCode == 0, let cell = result.cells.first, let address = NftUtils.parseAddress(cell: cell) {
                     seal.fulfill(address.toString(isUserFriendly: true, isUrlSafe: true, isBounceable: true))

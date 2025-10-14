@@ -42,7 +42,7 @@ public class WalletV4ContractR2: WalletContract {
         let cell = CellBuilder.beginCell()
         let _ = try cell.storeUint(number: BigInt.zero, bitLength: 32)
         let _ = try cell.storeUint(number: BigInt(getOptions().walletId!), bitLength: 32)
-        let _ = try cell.storeBytes(bytes: getOptions().publicKey!.bytes)
+        let _ = try cell.storeBytes(bytes: getOptions().publicKey!.byteArray)
         let _ = try cell.storeUint(number: BigInt.zero, bitLength: 1) //plugins dict empty
         return cell.endCell
     }
@@ -125,7 +125,7 @@ public class WalletV4ContractR2: WalletContract {
         let signingMessage = try createSigningMessage(seqno: params.seqno, withoutOp: true)
         try signingMessage.bits.writeUInt(number: isInstall ? BigInt(2) : BigInt(3), bitLength: 8)
         try signingMessage.bits.writeInt(number: BigInt(params.pluginAddress.wc), bitLength: 8)
-        try signingMessage.bits.writeBytes(ui8s: params.pluginAddress.hashPart.bytes)
+        try signingMessage.bits.writeBytes(ui8s: params.pluginAddress.hashPart.byteArray)
         try signingMessage.bits.writeCoins(amount: params.amount)
         try signingMessage.bits.writeUInt(number: BigInt(params.queryId), bitLength: 64)
         

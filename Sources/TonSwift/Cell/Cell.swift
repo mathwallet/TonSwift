@@ -71,7 +71,7 @@ public class Cell {
             let b = Data(hex: hexBitString)
 
             let bs = BitString(length: hexBitString.count * 8)
-            try bs.writeBytes(ui8s: b.bytes)
+            try bs.writeBytes(ui8s: b.byteArray)
 
             var ba = bs.toBitArray()
             var i = ba.count - 1
@@ -295,7 +295,7 @@ public class Cell {
         let offsetBytes = UInt8(max(ceil(Double(offsetBits) / Double(8)), 1))
         
         let serialization = BitString(length: (1023 + 32 * 4 + 32 * 3) * topologicalOrder.count)
-        try serialization.writeBytes(ui8s: Cell.reachBocMagicPrefix.bytes)
+        try serialization.writeBytes(ui8s: Cell.reachBocMagicPrefix.byteArray)
         try serialization.writeBitArray(ba: [hasIdx, hashCrc32, hasCacheBits])
         try serialization.writeUInt(number: BigInt(flags), bitLength: 2)
         try serialization.writeUInt(number: BigInt(sBytes), bitLength: 3)
@@ -314,7 +314,7 @@ public class Cell {
 
         for cell_info in topologicalOrder {
             let refcell_ser = try cell_info.cell.serializeForBoc(cellsIndex: cellsIndex)
-            try serialization.writeBytes(ui8s: refcell_ser.bytes)
+            try serialization.writeBytes(ui8s: refcell_ser.byteArray)
         }
 
         var ser_arr = try serialization.getTopUppedArray()
@@ -345,19 +345,19 @@ public class Cell {
     }
 
     public func toBocBase64() throws -> String {
-        return try toBoc().bytes.toBase64()
+        return try toBoc().byteArray.toBase64()
     }
 
     public func toBocBase64(hasIdx: Bool) throws -> String {
-        return try toBoc(hasIdx: hasIdx).bytes.toBase64()
+        return try toBoc(hasIdx: hasIdx).byteArray.toBase64()
     }
 
     public func toBocBase64(hasIdx: Bool, hashCrc32: Bool) throws -> String {
-        return try toBoc(hasIdx: hasIdx, hashCrc32: hashCrc32).bytes.toBase64()
+        return try toBoc(hasIdx: hasIdx, hashCrc32: hashCrc32).byteArray.toBase64()
     }
 
     public func toBocBase64(hasIdx: Bool, hashCrc32: Bool, hasCacheBits: Bool) throws -> String {
-        return try toBoc(hasIdx: hasIdx, hashCrc32: hashCrc32, hasCacheBits: hasCacheBits).bytes.toBase64()
+        return try toBoc(hasIdx: hasIdx, hashCrc32: hashCrc32, hasCacheBits: hasCacheBits).byteArray.toBase64()
     }
 
     /**
@@ -370,7 +370,7 @@ public class Cell {
      * @return String in base64
      */
     public func toBocBase64(hasIdx: Bool, hashCrc32: Bool,hasCacheBits: Bool, flags: Int) throws -> String {
-        return try toBoc(hasIdx: hasIdx, hashCrc32: hashCrc32, hasCacheBits: hasCacheBits, flags: flags).bytes.toBase64()
+        return try toBoc(hasIdx: hasIdx, hashCrc32: hashCrc32, hasCacheBits: hasCacheBits, flags: flags).byteArray.toBase64()
     }
 
     public func toHex(hasIdx: Bool, hashCrc32: Bool ,hasCacheBits: Bool, flags: Int) throws -> String {
@@ -391,7 +391,7 @@ public class Cell {
     }
 
     public func toBase64() throws -> String {
-        return try toBoc().bytes.toBase64()
+        return try toBoc().byteArray.toBase64()
     }
 
     func serializeForBoc(cellsIndex: [String: UInt64]) throws -> Data {
@@ -494,13 +494,13 @@ public class Cell {
         let inputData = serializedBoc
         let prefix = serializedBoc[0..<4]
         let serializedBocs = serializedBoc
-        var newSerializedBoc = serializedBocs[4..<serializedBoc.count].bytes
+        var newSerializedBoc = serializedBocs[4..<serializedBoc.count].byteArray
         var has_idx: Int = 0
         var hash_crc32: Int = 0
         var has_cache_bits: Int = 0
         var flags: Int = 0
         var size_bytes: Int = 0
-        if  Utils.compareBytes(a: prefix.bytes, b: Cell.reachBocMagicPrefix.bytes) {
+        if  Utils.compareBytes(a: prefix.byteArray, b: Cell.reachBocMagicPrefix.byteArray) {
             let flags_byte = Int(newSerializedBoc[0])
             has_idx = flags_byte & 128
             hash_crc32 = flags_byte & 64
@@ -509,7 +509,7 @@ public class Cell {
             size_bytes = flags_byte % 8
         }
         
-        if Utils.compareBytes(a: prefix.bytes, b: Cell.leanBocMagicPrefix.bytes) || Utils.compareBytes(a: prefix.bytes, b: self.leanBocMagicPrefixCRC.bytes) {
+        if Utils.compareBytes(a: prefix.byteArray, b: Cell.leanBocMagicPrefix.byteArray) || Utils.compareBytes(a: prefix.byteArray, b: self.leanBocMagicPrefixCRC.byteArray) {
             has_idx = 1
             hash_crc32 = 0
             has_cache_bits = 0
@@ -574,7 +574,7 @@ public class Cell {
             let bocWithoutCrc = inputData[0..<inputData.count-4]
             let crcInBoc =  Array<UInt8>(newSerializedBoc[0..<4])
             let crc32 = Utils.getCRC32ChecksumAsBytesReversed(data: bocWithoutCrc)
-            if !Utils.compareBytes(a: crc32.bytes, b: crcInBoc) {
+            if !Utils.compareBytes(a: crc32.byteArray, b: crcInBoc) {
                 throw TonError.otherError("Crc32c hashsum mismatch")
             }
             newSerializedBoc =  Array<UInt8>(newSerializedBoc[4..<newSerializedBoc.count])
@@ -605,9 +605,9 @@ public class Cell {
         if (cellData.count < 2) {
             throw TonError.otherError("Not enough bytes to encode cell descriptors");
         }
-        let d1 = Int(cellData.bytes[0] & 0xff)
-        let d2 = Int(cellData.bytes[1] & 0xff)
-        var newCellData = cellData[2..<cellData.count].bytes
+        let d1 = Int(cellData.byteArray[0] & 0xff)
+        let d2 = Int(cellData.byteArray[1] & 0xff)
+        var newCellData = cellData[2..<cellData.count].byteArray
         let isExotic = (d1 & 8) != 0
         let refNum = d1 % 8;
         let dataBytesize = Int(ceil(Double(d2) / Double(2)))

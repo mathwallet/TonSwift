@@ -128,7 +128,7 @@ public class CellBuilder: Cell {
 
     public func storeBytes(number: Data) throws -> CellBuilder {
         try checkBitsOverflow(length: number.count * 8)
-        try bits.writeBytes(ui8s: number.bytes)
+        try bits.writeBytes(ui8s: number.byteArray)
         return self
     }
 
@@ -142,7 +142,7 @@ public class CellBuilder: Cell {
 
     public func storeBytes(number: Data, bitLength: Int) throws -> CellBuilder {
         try checkBitsOverflow(length: bitLength)
-        try bits.writeBytes(ui8s: number.bytes)
+        try bits.writeBytes(ui8s: number.byteArray)
         return self
     }
 

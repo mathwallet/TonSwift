@@ -15,10 +15,8 @@ let package = Package(
             targets: ["TonSwift"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "TweetNacl", url: "https://github.com/lishuailibertine/tweetnacl-swiftwrap", from: "1.0.5"),
-        .package(name:"BIP39swift", url: "https://github.com/mathwallet/BIP39swift", from: "1.0.1"),
+        .package(name:"BIP39swift", url: "https://github.com/mathwallet/BIP39swift", from: "2.0.1"),
         .package(url: "https://github.com/mxcl/PromiseKit.git", .upToNextMajor(from: "8.1.1")),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0"),
         .package(url: "https://github.com/Flight-School/AnyCodable.git", from: "0.6.1"),
@@ -29,13 +27,15 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "TonSwift",
-            dependencies: ["TweetNacl",
-                           "BIP39swift",
-                           "PromiseKit",
-                           "BigInt",
-                           "AnyCodable",
-                           "Alamofire"
-                          ]),
+            dependencies: [
+                "TweetNacl",
+                "BIP39swift",
+                "PromiseKit",
+                "BigInt",
+                "AnyCodable",
+                "Alamofire"
+            ]
+        ),
         .testTarget(
             name: "TonSwiftTests",
             dependencies: ["TonSwift"]),
