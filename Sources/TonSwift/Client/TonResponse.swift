@@ -93,7 +93,7 @@ public struct RunGetRunMethodResult: Codable {
     public let gasUsed: Int
     public let stack: [[AnyCodable]]
     public let exitCode: Int
-    public let extra: String
+    public let extra: String?
     
     public var num: Int64? {
         for i in 0..<stack.count {
@@ -156,7 +156,7 @@ public struct EstimateFeeResult: Codable {
 public struct SendBocReturnHashResult: Codable {
     public let type: String
     public let hash: String
-    public let extra: String
+    public let extra: String?
     
     enum CodingKeys: String, CodingKey {
         case type = "@type"
